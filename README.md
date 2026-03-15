@@ -1,36 +1,79 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Vitalis Pulse
+
+**The heartbeat of Web3** — A project health scoring dashboard that provides real-time Vitalis Scores (0-100) for Web3 projects based on treasury management, development activity, community retention, revenue sustainability, and governance.
+
+![Vitalis Pulse Screenshot](screenshot-placeholder.png)
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+# Install dependencies
+npm install
+
+# Run development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
+# Build for production
+npm run build
+
+# Start production server
+npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to view the dashboard.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Tech Stack
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Framework:** Next.js 14 (App Router)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS
+- **Components:** shadcn/ui
+- **Charts:** Recharts
+- **Icons:** Lucide React
+- **Animations:** Framer Motion
+- **Theming:** next-themes (dark mode default)
 
-## Learn More
+## Features
 
-To learn more about Next.js, take a look at the following resources:
+- **Global Leaderboard** — Filterable, sortable table of 50 scored projects with real-time health metrics
+- **Project Deep-Dive** — Detailed breakdown across 5 health dimensions with interactive charts
+- **Compare Tool** — Side-by-side comparison of up to 4 projects with radar chart visualization
+- **Ecosystem Overview** — Health metrics aggregated by blockchain ecosystem
+- **Global Search** — Cmd+K search across all projects
+- **Dark/Light Mode** — Dark-first design with light mode toggle
+- **Responsive** — Desktop-optimized with mobile support
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Project Structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+app/                    # Next.js App Router pages
+  page.tsx              # Homepage / Leaderboard
+  project/[slug]/       # Project deep-dive
+  compare/              # Compare tool
+  ecosystems/           # Ecosystem overview
+  about/                # About & methodology
+components/
+  dashboard/            # Core dashboard components
+  project/              # Project detail sections
+  compare/              # Compare tool components
+  ecosystems/           # Ecosystem components
+  layout/               # Header, footer, search modal
+  ui/                   # shadcn/ui components
+lib/
+  mock-data.ts          # Realistic mock data generator (50 projects)
+  types.ts              # TypeScript interfaces
+  constants.ts          # Score tiers, chains, categories
+  utils.ts              # Helper functions
+```
 
-## Deploy on Vercel
+## Contributing
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/your-feature`)
+3. Commit your changes (`git commit -m 'Add your feature'`)
+4. Push to the branch (`git push origin feature/your-feature`)
+5. Open a Pull Request
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## License
+
+MIT
