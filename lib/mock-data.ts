@@ -25,13 +25,12 @@ function pick<T>(arr: T[]): T {
 
 function generateScoreHistory(baseScore: number, days: number): number[] {
   const history: number[] = [];
-  let current = baseScore + randBetween(-8, 8);
+  let current = baseScore + randBetween(-10, 10);
   for (let i = 0; i < days; i++) {
-    current += randBetween(-2, 2);
+    current += randBetween(-2.5, 2.5);
     current = Math.max(0, Math.min(100, current));
     history.push(Math.round(current));
   }
-  // Ensure last value is close to the actual score
   history[history.length - 1] = baseScore;
   return history;
 }
@@ -89,7 +88,6 @@ function generateTreasuryComposition(score: number): { label: string; percentage
     { label: 'Other', percentage: Math.max(otherPct, 5), color: '#64748B' },
   ];
 
-  // Normalize to 100
   const total = comp.reduce((s, c) => s + c.percentage, 0);
   comp.forEach(c => c.percentage = Math.round(c.percentage / total * 100));
   const diff = 100 - comp.reduce((s, c) => s + c.percentage, 0);
@@ -98,69 +96,84 @@ function generateTreasuryComposition(score: number): { label: string; percentage
   return comp;
 }
 
-const PROJECT_TEMPLATES = [
-  { name: 'Alpha Protocol', category: 'defi' as Category, chain: 'ethereum' as Chain },
-  { name: 'Nova Finance', category: 'defi' as Category, chain: 'ethereum' as Chain },
-  { name: 'Orbit Chain', category: 'l1-l2' as Category, chain: 'ethereum' as Chain },
-  { name: 'Vertex Labs', category: 'infrastructure' as Category, chain: 'ethereum' as Chain },
-  { name: 'Nexus DAO', category: 'dao' as Category, chain: 'ethereum' as Chain },
-  { name: 'Phantom Gaming', category: 'gamefi' as Category, chain: 'solana' as Chain },
-  { name: 'Atlas Infrastructure', category: 'infrastructure' as Category, chain: 'solana' as Chain },
-  { name: 'Meridian DEX', category: 'defi' as Category, chain: 'arbitrum' as Chain },
-  { name: 'Pulse Network', category: 'l1-l2' as Category, chain: 'polygon' as Chain },
-  { name: 'Zenith Protocol', category: 'defi' as Category, chain: 'base' as Chain },
-  { name: 'Catalyst Labs', category: 'infrastructure' as Category, chain: 'ethereum' as Chain },
-  { name: 'Vortex Finance', category: 'defi' as Category, chain: 'arbitrum' as Chain },
-  { name: 'Echo Social', category: 'socialfi' as Category, chain: 'solana' as Chain },
-  { name: 'Prism Collective', category: 'dao' as Category, chain: 'ethereum' as Chain },
-  { name: 'Nebula Gaming', category: 'gamefi' as Category, chain: 'polygon' as Chain },
-  { name: 'Quantum Bridge', category: 'infrastructure' as Category, chain: 'arbitrum' as Chain },
-  { name: 'Horizon Markets', category: 'defi' as Category, chain: 'ethereum' as Chain },
-  { name: 'Flux Protocol', category: 'defi' as Category, chain: 'solana' as Chain },
-  { name: 'Sentinel Guard', category: 'infrastructure' as Category, chain: 'ethereum' as Chain },
-  { name: 'Pixel Worlds', category: 'nft' as Category, chain: 'solana' as Chain },
-  { name: 'Apex Yield', category: 'defi' as Category, chain: 'base' as Chain },
-  { name: 'Lunar Network', category: 'l1-l2' as Category, chain: 'polygon' as Chain },
-  { name: 'Forge Protocol', category: 'defi' as Category, chain: 'ethereum' as Chain },
-  { name: 'Drift Exchange', category: 'defi' as Category, chain: 'solana' as Chain },
-  { name: 'Bastion DAO', category: 'dao' as Category, chain: 'arbitrum' as Chain },
-  { name: 'Helix Labs', category: 'infrastructure' as Category, chain: 'base' as Chain },
-  { name: 'Cosmos Arena', category: 'gamefi' as Category, chain: 'bnb' as Chain },
-  { name: 'Vector Finance', category: 'defi' as Category, chain: 'avalanche' as Chain },
-  { name: 'Nimbus Cloud', category: 'infrastructure' as Category, chain: 'optimism' as Chain },
-  { name: 'Radiant Swap', category: 'defi' as Category, chain: 'arbitrum' as Chain },
-  { name: 'Terra Nova', category: 'l1-l2' as Category, chain: 'ethereum' as Chain },
-  { name: 'Synapse Hub', category: 'socialfi' as Category, chain: 'base' as Chain },
-  { name: 'Ember Finance', category: 'defi' as Category, chain: 'polygon' as Chain },
-  { name: 'Arctic Protocol', category: 'defi' as Category, chain: 'ethereum' as Chain },
-  { name: 'Phoenix Rise', category: 'dao' as Category, chain: 'solana' as Chain },
-  { name: 'Titan Network', category: 'infrastructure' as Category, chain: 'arbitrum' as Chain },
-  { name: 'Aegis Shield', category: 'infrastructure' as Category, chain: 'ethereum' as Chain },
-  { name: 'Oasis Markets', category: 'defi' as Category, chain: 'bnb' as Chain },
-  { name: 'Cipher NFT', category: 'nft' as Category, chain: 'ethereum' as Chain },
-  { name: 'Solstice Games', category: 'gamefi' as Category, chain: 'solana' as Chain },
-  { name: 'Aether DAO', category: 'dao' as Category, chain: 'ethereum' as Chain },
-  { name: 'Ripple Tide', category: 'defi' as Category, chain: 'base' as Chain },
-  { name: 'Starlight DeFi', category: 'defi' as Category, chain: 'optimism' as Chain },
-  { name: 'Marble Protocol', category: 'nft' as Category, chain: 'polygon' as Chain },
-  { name: 'Zephyr Labs', category: 'infrastructure' as Category, chain: 'solana' as Chain },
-  { name: 'Cortex AI', category: 'infrastructure' as Category, chain: 'ethereum' as Chain },
-  { name: 'Dawn Protocol', category: 'defi' as Category, chain: 'avalanche' as Chain },
-  { name: 'Rally Social', category: 'socialfi' as Category, chain: 'polygon' as Chain },
-  { name: 'Genesis Vault', category: 'defi' as Category, chain: 'ethereum' as Chain },
-  { name: 'Omega Chain', category: 'l1-l2' as Category, chain: 'bnb' as Chain },
+// 200 project names generated from prefix + suffix pools
+const PREFIXES = [
+  'Alpha', 'Nova', 'Orbit', 'Vertex', 'Nexus', 'Phantom', 'Atlas', 'Forge', 'Helix', 'Cipher',
+  'Prism', 'Quantum', 'Vortex', 'Horizon', 'Pulse', 'Drift', 'Echo', 'Flux', 'Ember', 'Onyx',
+  'Aero', 'Bolt', 'Crest', 'Dawn', 'Edge', 'Fuse', 'Grid', 'Hive', 'Ion', 'Jade',
+  'Kite', 'Loom', 'Mesa', 'Node', 'Opal', 'Peak', 'Quill', 'Reef', 'Silk', 'Tide',
+  'Umbra', 'Vale', 'Wave', 'Xeno', 'Yield', 'Zephyr', 'Arch', 'Bloom', 'Core', 'Dusk',
+  'Flint', 'Glow', 'Helm', 'Ink', 'Jolt', 'Keen', 'Lynx', 'Mist', 'Neon', 'Orion',
+  'Pine', 'Rune', 'Sage', 'Thorn', 'Void', 'Wren', 'Apex', 'Blaze', 'Cliff', 'Drake',
 ];
 
-// Score distribution: 5 at 85+, 15 at 70-84, 15 at 50-69, 10 at 25-49, 5 below 25
+const SUFFIXES = [
+  'Protocol', 'Finance', 'Labs', 'Chain', 'Network', 'DAO', 'Exchange', 'Vault', 'Markets', 'Studio',
+  'Gaming', 'Hub', 'Bridge', 'Layer', 'Swap', 'Lend', 'Pay', 'Social', 'Guard', 'Shield',
+  'Link', 'Mint', 'Pool', 'Port', 'Sync', 'Trade', 'Trust', 'Works', 'Zone', 'Capital',
+];
+
+const CHAINS_LIST: Chain[] = ['ethereum', 'solana', 'arbitrum', 'base', 'polygon', 'bnb', 'optimism', 'avalanche'];
+const CATEGORIES_LIST: Category[] = ['defi', 'gamefi', 'infrastructure', 'nft', 'l1-l2', 'dao', 'socialfi'];
+
+// Chain weight distribution (more projects on major chains)
+const CHAIN_WEIGHTS: { chain: Chain; weight: number }[] = [
+  { chain: 'ethereum', weight: 30 },
+  { chain: 'solana', weight: 18 },
+  { chain: 'arbitrum', weight: 15 },
+  { chain: 'base', weight: 12 },
+  { chain: 'polygon', weight: 10 },
+  { chain: 'bnb', weight: 7 },
+  { chain: 'optimism', weight: 5 },
+  { chain: 'avalanche', weight: 3 },
+];
+
+function pickWeightedChain(): Chain {
+  const total = CHAIN_WEIGHTS.reduce((s, c) => s + c.weight, 0);
+  let r = rand() * total;
+  for (const { chain, weight } of CHAIN_WEIGHTS) {
+    r -= weight;
+    if (r <= 0) return chain;
+  }
+  return 'ethereum';
+}
+
+function generateProjectTemplates(count: number) {
+  const usedNames = new Set<string>();
+  const templates: { name: string; category: Category; chain: Chain }[] = [];
+
+  for (let i = 0; i < count; i++) {
+    let name = '';
+    let attempts = 0;
+    do {
+      const prefix = PREFIXES[Math.floor(rand() * PREFIXES.length)];
+      const suffix = SUFFIXES[Math.floor(rand() * SUFFIXES.length)];
+      name = `${prefix} ${suffix}`;
+      attempts++;
+    } while (usedNames.has(name) && attempts < 50);
+    usedNames.add(name);
+
+    templates.push({
+      name,
+      category: CATEGORIES_LIST[Math.floor(rand() * CATEGORIES_LIST.length)],
+      chain: pickWeightedChain(),
+    });
+  }
+
+  return templates;
+}
+
+// Score distribution for 200 projects:
+// ~20 at 85+, ~60 at 70-84, ~60 at 50-69, ~40 at 25-49, ~20 below 25
 const SCORE_BUCKETS: { min: number; max: number; count: number }[] = [
-  { min: 87, max: 96, count: 5 },
-  { min: 70, max: 84, count: 15 },
-  { min: 50, max: 69, count: 15 },
-  { min: 25, max: 49, count: 10 },
-  { min: 8, max: 24, count: 5 },
+  { min: 85, max: 97, count: 20 },
+  { min: 70, max: 84, count: 60 },
+  { min: 50, max: 69, count: 60 },
+  { min: 25, max: 49, count: 40 },
+  { min: 5, max: 24, count: 20 },
 ];
 
-function generateScores(): number[] {
+function generateScores(total: number): number[] {
   const scores: number[] = [];
   for (const bucket of SCORE_BUCKETS) {
     for (let i = 0; i < bucket.count; i++) {
@@ -172,15 +185,16 @@ function generateScores(): number[] {
     const j = Math.floor(rand() * (i + 1));
     [scores[i], scores[j]] = [scores[j], scores[i]];
   }
-  return scores;
+  return scores.slice(0, total);
 }
 
-function generateHealthSummary(score: number, project: typeof PROJECT_TEMPLATES[0]): string {
+function generateHealthSummary(score: number): string {
   if (score >= 85) {
     return pick([
       'Strong development activity with diversified treasury and growing community engagement.',
       'Excellent operational health across all metrics. Revenue positive with robust governance practices.',
       'Top-tier project health with active development, strong treasury management, and growing adoption.',
+      'Outstanding fundamentals. Multiple revenue streams, active contributor base, and strong governance.',
     ]);
   }
   if (score >= 70) {
@@ -188,6 +202,7 @@ function generateHealthSummary(score: number, project: typeof PROJECT_TEMPLATES[
       'Solid fundamentals with active development team. Treasury diversification could be improved.',
       'Healthy metrics overall. Community growth is steady but governance participation is declining.',
       'Good development velocity and revenue trajectory. Minor concerns around token concentration in treasury.',
+      'Stable project with consistent development output. Revenue growing but still dependent on token incentives.',
     ]);
   }
   if (score >= 50) {
@@ -195,6 +210,7 @@ function generateHealthSummary(score: number, project: typeof PROJECT_TEMPLATES[
       'Development activity has slowed. Treasury runway is adequate but burn rate is concerning.',
       'Community metrics are mixed with declining DAU/MAU ratio. Revenue shows signs of stabilization.',
       'Moderate risk profile. Development team is active but treasury concentration in native token is high.',
+      'Declining community engagement paired with adequate treasury. Development pace has dropped in recent weeks.',
     ]);
   }
   if (score >= 25) {
@@ -202,44 +218,76 @@ function generateHealthSummary(score: number, project: typeof PROJECT_TEMPLATES[
       'Critical concerns around treasury runway and declining development activity.',
       'Revenue declining with high burn rate. Community churn is accelerating. Needs immediate attention.',
       'Limited development activity and shrinking community. Treasury runway is below 6 months.',
+      'Severe decline in key metrics. Governance participation near zero, treasury reserves dwindling rapidly.',
     ]);
   }
   return pick([
     'Severe operational concerns. Minimal development activity, depleted treasury, and no revenue.',
     'Project shows minimal signs of active development. Treasury is nearly depleted with no clear path to sustainability.',
     'Terminal state: no recent commits, treasury below 3 months runway, community has largely abandoned the project.',
+    'Effectively abandoned. No meaningful development, negligible community activity, treasury approaching zero.',
   ]);
 }
 
-function generateProject(template: typeof PROJECT_TEMPLATES[0], score: number, index: number): Project {
+function generateProject(template: { name: string; category: Category; chain: Chain }, score: number, index: number): Project {
   const slug = template.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-  const trend24h = randBetween(-5, 5);
+  // ~40% negative trends for bear market realism
+  const trend24h = rand() < 0.4 ? randBetween(-4.5, -0.1) : randBetween(0.1, 4.5);
 
-  // Treasury correlates with score
-  const treasuryBase = score > 70 ? randBetween(5_000_000, 200_000_000) :
-                       score > 40 ? randBetween(500_000, 20_000_000) :
-                       randBetween(50_000, 2_000_000);
-  const monthlyBurn = score > 70 ? randBetween(50_000, 500_000) :
-                      score > 40 ? randBetween(100_000, 800_000) :
-                      randBetween(200_000, 1_000_000);
-  const runwayMonths = Math.round(treasuryBase / monthlyBurn);
+  // Treasury and runway — realistic, correlated with score
+  const treasuryBase = score >= 85 ? randBetween(20_000_000, 200_000_000) :
+                       score >= 70 ? randBetween(3_000_000, 50_000_000) :
+                       score >= 50 ? randBetween(500_000, 10_000_000) :
+                       score >= 25 ? randBetween(100_000, 3_000_000) :
+                       randBetween(10_000, 500_000);
+
+  const monthlyBurn = score >= 85 ? randBetween(100_000, 600_000) :
+                      score >= 70 ? randBetween(80_000, 400_000) :
+                      score >= 50 ? randBetween(60_000, 350_000) :
+                      score >= 25 ? randBetween(80_000, 500_000) :
+                      randBetween(50_000, 300_000);
+
+  // Runway: directly control by score tier for realistic distribution
+  let runwayMonths: number;
+  if (score >= 85) {
+    runwayMonths = randInt(36, 60);      // 3-5 years
+  } else if (score >= 70) {
+    runwayMonths = randInt(12, 36);      // 1-3 years
+  } else if (score >= 50) {
+    runwayMonths = randInt(4, 14);       // 4-14 months
+  } else if (score >= 25) {
+    runwayMonths = randInt(1, 6);        // 1-6 months
+  } else {
+    runwayMonths = randInt(0, 2);        // 0-2 months
+  }
+
   const stablecoinRatio = score > 70 ? randBetween(0.25, 0.50) :
                           score > 40 ? randBetween(0.10, 0.35) :
                           randBetween(0.0, 0.15);
 
   // Dev activity correlates with score
-  const activeDevs = score > 70 ? randInt(8, 35) : score > 40 ? randInt(3, 12) : randInt(0, 4);
-  const commits30d = activeDevs * randInt(8, 30);
+  const activeDevs = score >= 85 ? randInt(12, 40) :
+                     score >= 70 ? randInt(6, 20) :
+                     score >= 50 ? randInt(3, 12) :
+                     score >= 25 ? randInt(1, 5) :
+                     randInt(0, 2);
+  const commits30d = activeDevs * randInt(6, 25);
 
   // Community
-  const dauBase = score > 70 ? randBetween(5000, 100000) : score > 40 ? randBetween(500, 10000) : randBetween(50, 1000);
+  const dauBase = score >= 85 ? randBetween(20000, 150000) :
+                  score >= 70 ? randBetween(3000, 40000) :
+                  score >= 50 ? randBetween(500, 8000) :
+                  score >= 25 ? randBetween(100, 2000) :
+                  randBetween(10, 300);
 
   // Revenue
-  const monthlyRevenue = score > 70 ? randBetween(50_000, 500_000) :
-                         score > 40 ? randBetween(5_000, 80_000) :
-                         randBetween(0, 5_000);
-  const revenueTrend: RevenueTrend = score > 70 ? pick(['growing', 'stable']) :
-                                     score > 40 ? pick(['stable', 'declining', 'growing']) :
+  const monthlyRevenue = score >= 85 ? randBetween(100_000, 800_000) :
+                         score >= 70 ? randBetween(30_000, 200_000) :
+                         score >= 50 ? randBetween(5_000, 60_000) :
+                         score >= 25 ? randBetween(0, 10_000) :
+                         randBetween(0, 1_000);
+  const revenueTrend: RevenueTrend = score >= 70 ? pick(['growing', 'growing', 'stable']) :
+                                     score >= 50 ? pick(['stable', 'declining', 'growing']) :
                                      pick(['declining', 'declining', 'stable']);
 
   const badges: string[] = [];
@@ -258,7 +306,7 @@ function generateProject(template: typeof PROJECT_TEMPLATES[0], score: number, i
     scoreTrend24h: Math.round(trend24h * 10) / 10,
     treasury: {
       totalUsd: Math.round(treasuryBase),
-      runwayMonths: Math.min(runwayMonths, 60),
+      runwayMonths,
       diversificationGrade: scoreToGrade(score + 5),
       composition: generateTreasuryComposition(score),
       stablecoinRatio: Math.round(stablecoinRatio * 100) / 100,
@@ -279,8 +327,8 @@ function generateProject(template: typeof PROJECT_TEMPLATES[0], score: number, i
                    score > 40 ? Math.round(randBetween(0.10, 0.30) * 100) / 100 :
                    Math.round(randBetween(0.02, 0.12) * 100) / 100,
       holderGrowth30d: score > 70 ? Math.round(randBetween(3, 15) * 10) / 10 :
-                       score > 40 ? Math.round(randBetween(-2, 8) * 10) / 10 :
-                       Math.round(randBetween(-15, 0) * 10) / 10,
+                       score > 40 ? Math.round(randBetween(-5, 8) * 10) / 10 :
+                       Math.round(randBetween(-20, -1) * 10) / 10,
       giniCoefficient: Math.round(randBetween(0.35, 0.85) * 100) / 100,
       churnRate: score > 70 ? Math.round(randBetween(1, 5) * 10) / 10 :
                  score > 40 ? Math.round(randBetween(4, 12) * 10) / 10 :
@@ -307,13 +355,16 @@ function generateProject(template: typeof PROJECT_TEMPLATES[0], score: number, i
                 pick(['1/3', '2/3', '1/1']),
       bugBountyActive: score > 60 ? rand() > 0.2 : rand() > 0.7,
     },
-    healthSummary: generateHealthSummary(score, template),
+    healthSummary: generateHealthSummary(score),
     badges,
   };
 }
 
-const scores = generateScores();
-export const projects: Project[] = PROJECT_TEMPLATES.map((template, i) =>
+const PROJECT_COUNT = 200;
+const templates = generateProjectTemplates(PROJECT_COUNT);
+const scores = generateScores(PROJECT_COUNT);
+
+export const projects: Project[] = templates.map((template, i) =>
   generateProject(template, scores[i], i)
 ).sort((a, b) => b.vitalisScore - a.vitalisScore);
 

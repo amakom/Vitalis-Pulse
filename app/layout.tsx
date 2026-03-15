@@ -18,10 +18,22 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: "Vitalis Pulse — The Heartbeat of Web3",
-  description: "Web3 project health scoring dashboard. The credit score for crypto projects — treasury, development, community, revenue & governance metrics.",
-  keywords: ["web3", "crypto", "defi", "project health", "scoring", "dashboard"],
+  description: "Real-time health scores for Web3 projects. Track treasury health, development activity, community retention, and more. The credit score for crypto.",
+  keywords: ["web3", "crypto", "project health", "vitalis", "defi", "blockchain analytics"],
   icons: {
     icon: '/favicon.svg',
+  },
+  openGraph: {
+    title: "Vitalis Pulse — The Heartbeat of Web3",
+    description: "Real-time health scores for Web3 projects. Is your favorite project thriving or dying?",
+    url: "https://vitalis-pulse.vercel.app",
+    siteName: "Vitalis Pulse",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Vitalis Pulse — The Heartbeat of Web3",
+    description: "Real-time health scores for Web3 projects. Is your favorite project thriving or dying?",
   },
 };
 

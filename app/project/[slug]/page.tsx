@@ -56,7 +56,7 @@ export default function ProjectPage({ params }: { params: Promise<{ slug: string
       <div className="mb-8 rounded-xl border border-border bg-card p-6 lg:p-8">
         <div className="flex flex-col items-start gap-6 lg:flex-row lg:items-center lg:gap-10">
           {/* Score ring */}
-          <ScoreRing score={project.vitalisScore} size="lg" />
+          <ScoreRing score={project.vitalisScore} size="lg" showLabel />
 
           {/* Info */}
           <div className="flex-1">

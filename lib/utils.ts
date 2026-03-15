@@ -21,6 +21,14 @@ export function formatNumber(value: number): string {
 export function formatRunway(months: number): string {
   if (months >= 60) return '5+ years';
   if (months >= 24) return `${Math.floor(months / 12)}+ years`;
-  if (months < 3) return '< 3 months';
+  if (months <= 0) return '< 1 month';
+  if (months < 3) return `${months} months`;
   return `${months} months`;
+}
+
+export function getRunwayColor(months: number): string | undefined {
+  if (months < 3) return '#EF4444';       // red — critical
+  if (months < 6) return '#F97316';       // orange — concerning
+  if (months < 12) return '#F59E0B';      // amber — watch
+  return undefined;                        // default text color — safe
 }

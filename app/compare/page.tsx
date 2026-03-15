@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { projects } from '@/lib/mock-data';
 import { Project } from '@/lib/types';
 import { getScoreColor, getCategoryLabel } from '@/lib/constants';
-import { formatCurrency, formatRunway } from '@/lib/utils';
+import { formatCurrency, formatRunway, getRunwayColor } from '@/lib/utils';
 import { ScoreRing } from '@/components/dashboard/score-ring';
 import { ChainBadge } from '@/components/dashboard/chain-badge';
 import { GradeBadge } from '@/components/dashboard/tier-badge';
@@ -107,7 +107,7 @@ export default function ComparePage() {
                   { label: 'Category', values: selected.map(p => ({ text: getCategoryLabel(p.category), color: undefined as string | undefined })) },
                   { label: 'Chain', values: selected.map(p => ({ text: p.chain, color: undefined as string | undefined })) },
                   { label: 'Treasury', values: selected.map(p => ({ text: formatCurrency(p.treasury.totalUsd), color: undefined as string | undefined })) },
-                  { label: 'Runway', values: selected.map(p => ({ text: formatRunway(p.treasury.runwayMonths), color: p.treasury.runwayMonths < 6 ? '#EF4444' : undefined })) },
+                  { label: 'Runway', values: selected.map(p => ({ text: formatRunway(p.treasury.runwayMonths), color: getRunwayColor(p.treasury.runwayMonths) })) },
                   { label: 'Burn Rate', values: selected.map(p => ({ text: `${formatCurrency(p.treasury.monthlyBurnUsd)}/mo`, color: undefined as string | undefined })) },
                   { label: 'Commits (30d)', values: selected.map(p => ({ text: p.development.commits30d.toLocaleString(), color: undefined as string | undefined })) },
                   { label: 'Active Devs', values: selected.map(p => ({ text: p.development.activeDevs.toString(), color: undefined as string | undefined })) },

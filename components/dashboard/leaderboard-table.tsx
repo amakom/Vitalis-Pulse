@@ -2,10 +2,11 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { Project } from '@/lib/types';
-import { getCategoryLabel } from '@/lib/constants';
-import { formatRunway } from '@/lib/utils';
+import { getCategoryLabel, getScoreColor } from '@/lib/constants';
+import { formatRunway, getRunwayColor } from '@/lib/utils';
 import { ScoreRing } from './score-ring';
 import { ScoreSparkline } from './score-sparkline';
 import { ChainBadge } from './chain-badge';
@@ -20,6 +21,7 @@ interface LeaderboardTableProps {
 const PAGE_SIZE = 25;
 
 export function LeaderboardTable({ projects, initialChain = 'all' }: LeaderboardTableProps) {
+  const router = useRouter();
   const [chain, setChain] = useState(initialChain);
   const [category, setCategory] = useState('all');
   const [scoreRange, setScoreRange] = useState('all');
@@ -50,6 +52,20 @@ export function LeaderboardTable({ projects, initialChain = 'all' }: Leaderboard
 
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
   const paged = filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+
+  // Render at most 7 page buttons around current page
+  const pageButtons = useMemo(() => {
+    if (totalPages <= 7) return Array.from({ length: totalPages }, (_, i) => i);
+    const buttons: (number | 'ellipsis')[] = [];
+    buttons.push(0);
+    if (page > 2) buttons.push('ellipsis' as unknown as number);
+    for (let i = Math.max(1, page - 1); i <= Math.min(totalPages - 2, page + 1); i++) {
+      buttons.push(i);
+    }
+    if (page < totalPages - 3) buttons.push('ellipsis' as unknown as number);
+    buttons.push(totalPages - 1);
+    return buttons;
+  }, [totalPages, page]);
 
   return (
     <div className="space-y-4">
@@ -83,17 +99,19 @@ export function LeaderboardTable({ projects, initialChain = 'all' }: Leaderboard
             {paged.map((project, i) => {
               const rank = page * PAGE_SIZE + i + 1;
               const trendPositive = project.scoreTrend24h >= 0;
+              const runwayColor = getRunwayColor(project.treasury.runwayMonths);
               return (
                 <tr
                   key={project.id}
-                  className="border-b border-border transition-colors hover:bg-muted/30 even:bg-muted/10"
+                  onClick={() => router.push(`/project/${project.slug}`)}
+                  className="cursor-pointer border-b border-border transition-colors hover:bg-slate-50 even:bg-muted/10 dark:hover:bg-[#0F1D32]"
                 >
                   <td className="px-4 py-3 font-mono text-muted-foreground">{rank}</td>
                   <td className="px-4 py-3">
-                    <Link href={`/project/${project.slug}`} className="flex items-center gap-3 hover:text-teal">
+                    <div className="flex items-center gap-3">
                       <div
                         className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white"
-                        style={{ backgroundColor: `hsl(${(project.name.charCodeAt(0) * 7) % 360}, 60%, 45%)` }}
+                        style={{ backgroundColor: `hsl(${(project.name.charCodeAt(0) * 7 + project.name.charCodeAt(1) * 3) % 360}, 55%, 45%)` }}
                       >
                         {project.name.charAt(0)}
                       </div>
@@ -103,7 +121,7 @@ export function LeaderboardTable({ projects, initialChain = 'all' }: Leaderboard
                           <ChainBadge chain={project.chain} />
                         </div>
                       </div>
-                    </Link>
+                    </div>
                   </td>
                   <td className="px-4 py-3">
                     <span className="rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
@@ -112,18 +130,26 @@ export function LeaderboardTable({ projects, initialChain = 'all' }: Leaderboard
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
-                      <ScoreRing score={project.vitalisScore} size="sm" animated={false} />
+                      <span
+                        className="font-mono text-lg font-bold"
+                        style={{ color: getScoreColor(project.vitalisScore) }}
+                      >
+                        {project.vitalisScore}
+                      </span>
                       <ScoreSparkline data={project.scoreHistory} score={project.vitalisScore} />
                     </div>
                   </td>
                   <td className="px-4 py-3">
-                    <span className={`inline-flex items-center gap-0.5 font-mono text-sm font-medium ${trendPositive ? 'text-emerald' : 'text-red'}`}>
+                    <span className={`inline-flex items-center gap-0.5 font-mono text-sm font-medium ${trendPositive ? 'text-emerald-500' : 'text-red-500'}`}>
                       {trendPositive ? <ArrowUpRight className="h-3.5 w-3.5" /> : <ArrowDownRight className="h-3.5 w-3.5" />}
-                      {Math.abs(project.scoreTrend24h)}%
+                      {Math.abs(project.scoreTrend24h).toFixed(1)}%
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    <span className={`font-mono text-sm ${project.treasury.runwayMonths < 6 ? 'text-red font-semibold' : 'text-foreground'}`}>
+                    <span
+                      className="font-mono text-sm font-medium"
+                      style={runwayColor ? { color: runwayColor } : undefined}
+                    >
                       {formatRunway(project.treasury.runwayMonths)}
                     </span>
                   </td>
@@ -132,11 +158,11 @@ export function LeaderboardTable({ projects, initialChain = 'all' }: Leaderboard
                   </td>
                   <td className="px-4 py-3">
                     {project.revenue.isRevenuePositive ? (
-                      <span className="inline-flex items-center rounded-full bg-emerald/15 px-2.5 py-0.5 text-xs font-medium text-emerald">
+                      <span className="inline-flex items-center rounded-full bg-emerald-500/15 px-2.5 py-0.5 text-xs font-medium text-emerald-500">
                         Revenue Positive
                       </span>
                     ) : (
-                      <span className="inline-flex items-center rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
+                      <span className="inline-flex items-center rounded-full bg-slate-500/15 px-2.5 py-0.5 text-xs font-medium text-slate-400">
                         Pre-Revenue
                       </span>
                     )}
@@ -153,6 +179,7 @@ export function LeaderboardTable({ projects, initialChain = 'all' }: Leaderboard
         {paged.map((project, i) => {
           const rank = page * PAGE_SIZE + i + 1;
           const trendPositive = project.scoreTrend24h >= 0;
+          const runwayColor = getRunwayColor(project.treasury.runwayMonths);
           return (
             <Link
               key={project.id}
@@ -164,7 +191,7 @@ export function LeaderboardTable({ projects, initialChain = 'all' }: Leaderboard
                   <span className="font-mono text-sm text-muted-foreground">#{rank}</span>
                   <div
                     className="flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold text-white"
-                    style={{ backgroundColor: `hsl(${(project.name.charCodeAt(0) * 7) % 360}, 60%, 45%)` }}
+                    style={{ backgroundColor: `hsl(${(project.name.charCodeAt(0) * 7 + project.name.charCodeAt(1) * 3) % 360}, 55%, 45%)` }}
                   >
                     {project.name.charAt(0)}
                   </div>
@@ -177,10 +204,12 @@ export function LeaderboardTable({ projects, initialChain = 'all' }: Leaderboard
               </div>
               <div className="mt-3 flex items-center gap-4 text-xs text-muted-foreground">
                 <span>{getCategoryLabel(project.category)}</span>
-                <span className={trendPositive ? 'text-emerald' : 'text-red'}>
-                  {trendPositive ? '+' : ''}{project.scoreTrend24h}%
+                <span className={trendPositive ? 'text-emerald-500' : 'text-red-500'}>
+                  {trendPositive ? '+' : ''}{project.scoreTrend24h.toFixed(1)}%
                 </span>
-                <span>{formatRunway(project.treasury.runwayMonths)}</span>
+                <span style={runwayColor ? { color: runwayColor } : undefined}>
+                  {formatRunway(project.treasury.runwayMonths)}
+                </span>
                 <GradeBadge grade={project.development.grade} />
               </div>
             </Link>
@@ -202,19 +231,23 @@ export function LeaderboardTable({ projects, initialChain = 'all' }: Leaderboard
             >
               Previous
             </button>
-            {Array.from({ length: totalPages }, (_, i) => (
-              <button
-                key={i}
-                onClick={() => setPage(i)}
-                className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
-                  page === i
-                    ? 'bg-teal text-white'
-                    : 'border border-border bg-card hover:bg-accent'
-                }`}
-              >
-                {i + 1}
-              </button>
-            ))}
+            {pageButtons.map((p, idx) =>
+              p === ('ellipsis' as unknown as number) ? (
+                <span key={`e-${idx}`} className="flex items-center px-2 text-muted-foreground">...</span>
+              ) : (
+                <button
+                  key={p}
+                  onClick={() => setPage(p as number)}
+                  className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
+                    page === p
+                      ? 'bg-teal text-white'
+                      : 'border border-border bg-card hover:bg-accent'
+                  }`}
+                >
+                  {(p as number) + 1}
+                </button>
+              )
+            )}
             <button
               onClick={() => setPage(Math.min(totalPages - 1, page + 1))}
               disabled={page === totalPages - 1}

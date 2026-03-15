@@ -4,7 +4,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { Project } from '@/lib/types';
 import { MiniMetric } from '@/components/dashboard/metric-card';
 import { GradeBadge } from '@/components/dashboard/tier-badge';
-import { formatCurrency } from '@/lib/utils';
+import { formatCurrency, formatRunway, getRunwayColor } from '@/lib/utils';
 import { getScoreColor } from '@/lib/constants';
 
 interface TreasurySectionProps {
@@ -46,7 +46,7 @@ export function TreasurySection({ project, subScore }: TreasurySectionProps) {
 
       {/* Metrics */}
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <MiniMetric label="Runway" value={`${treasury.runwayMonths} months`} valueColor={treasury.runwayMonths < 6 ? '#EF4444' : undefined} />
+        <MiniMetric label="Runway" value={formatRunway(treasury.runwayMonths)} valueColor={getRunwayColor(treasury.runwayMonths)} />
         <MiniMetric label="Diversification" value={treasury.diversificationGrade} />
         <MiniMetric label="Stablecoin Ratio" value={`${Math.round(treasury.stablecoinRatio * 100)}%`} />
         <MiniMetric label="Burn Rate" value={`${formatCurrency(treasury.monthlyBurnUsd)}/mo`} />

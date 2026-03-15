@@ -1,47 +1,70 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import { getScoreColor } from '@/lib/constants';
+import { motion, useSpring, useTransform } from 'framer-motion';
+import { getScoreColor, getScoreTier } from '@/lib/constants';
 
 interface ScoreRingProps {
   score: number;
   size?: 'sm' | 'md' | 'lg';
   animated?: boolean;
+  showLabel?: boolean;
 }
 
 const SIZES = {
-  sm: { width: 48, stroke: 4, fontSize: 14 },
-  md: { width: 80, stroke: 5, fontSize: 22 },
-  lg: { width: 160, stroke: 8, fontSize: 44 },
+  sm: { width: 48, stroke: 4, fontSize: '14px', labelSize: '0px' },
+  md: { width: 80, stroke: 5, fontSize: '22px', labelSize: '10px' },
+  lg: { width: 160, stroke: 8, fontSize: '42px', labelSize: '13px' },
 };
 
-export function ScoreRing({ score, size = 'md', animated = true }: ScoreRingProps) {
-  const [animatedScore, setAnimatedScore] = useState(animated ? 0 : score);
-  const config = SIZES[size];
-  const radius = (config.width - config.stroke * 2) / 2;
-  const circumference = 2 * Math.PI * radius;
-  const color = getScoreColor(score);
+export function ScoreRing({ score, size = 'md', animated = true, showLabel = false }: ScoreRingProps) {
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    if (!animated) return;
-    const duration = 1000;
-    const startTime = Date.now();
-    const animate = () => {
-      const elapsed = Date.now() - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3); // easeOutCubic
-      setAnimatedScore(Math.round(score * eased));
-      if (progress < 1) requestAnimationFrame(animate);
-    };
-    requestAnimationFrame(animate);
-  }, [score, animated]);
+    setMounted(true);
+  }, []);
 
-  const offset = circumference - (animatedScore / 100) * circumference;
+  const config = SIZES[size];
+  const radius = (config.width - config.stroke) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const color = getScoreColor(score);
+  const tier = getScoreTier(score);
+
+  // Spring animation for smooth count-up
+  const springValue = useSpring(0, {
+    stiffness: 50,
+    damping: 20,
+    restDelta: 0.01,
+  });
+
+  const strokeDashoffset = useTransform(
+    springValue,
+    (v) => circumference - (v / 100) * circumference
+  );
+
+  const displayScore = useTransform(springValue, (v) => Math.round(v));
+
+  useEffect(() => {
+    if (mounted && animated) {
+      springValue.set(score);
+    } else if (!animated) {
+      springValue.jump(score);
+    }
+  }, [mounted, score, animated, springValue]);
+
+  const [displayNum, setDisplayNum] = useState(animated ? 0 : score);
+
+  useEffect(() => {
+    const unsubscribe = displayScore.on('change', (v) => {
+      setDisplayNum(v as number);
+    });
+    return unsubscribe;
+  }, [displayScore]);
 
   return (
-    <div className="relative inline-flex items-center justify-center" style={{ width: config.width, height: config.width }}>
+    <div className="relative flex flex-col items-center">
       <svg width={config.width} height={config.width} className="-rotate-90">
+        {/* Background track */}
         <circle
           cx={config.width / 2}
           cy={config.width / 2}
@@ -49,8 +72,9 @@ export function ScoreRing({ score, size = 'md', animated = true }: ScoreRingProp
           fill="none"
           stroke="currentColor"
           strokeWidth={config.stroke}
-          className="text-border opacity-30"
+          className="text-slate-200 dark:text-[#1E3A5F]"
         />
+        {/* Animated score ring */}
         <motion.circle
           cx={config.width / 2}
           cy={config.width / 2}
@@ -60,17 +84,26 @@ export function ScoreRing({ score, size = 'md', animated = true }: ScoreRingProp
           strokeWidth={config.stroke}
           strokeLinecap="round"
           strokeDasharray={circumference}
-          initial={{ strokeDashoffset: circumference }}
-          animate={{ strokeDashoffset: offset }}
-          transition={{ duration: animated ? 1 : 0, ease: 'easeOut' }}
+          style={{ strokeDashoffset }}
         />
       </svg>
-      <span
-        className="absolute font-mono font-bold"
-        style={{ fontSize: config.fontSize, color }}
-      >
-        {animatedScore}
-      </span>
+      {/* Score number in center */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+        <span
+          className="font-mono font-bold"
+          style={{ fontSize: config.fontSize, color }}
+        >
+          {displayNum}
+        </span>
+        {showLabel && size === 'lg' && (
+          <span
+            className="mt-0.5 text-muted-foreground"
+            style={{ fontSize: config.labelSize }}
+          >
+            {tier.label}
+          </span>
+        )}
+      </div>
     </div>
   );
 }
