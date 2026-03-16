@@ -1,24 +1,19 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Search, TrendingUp, Clock, X } from 'lucide-react';
-import { projects } from '@/lib/mock-data';
-import { getScoreColor } from '@/lib/constants';
-import { getCategoryLabel, getChainInfo } from '@/lib/constants';
+import { Search, TrendingUp } from 'lucide-react';
+import { Project } from '@/lib/types';
+import { getScoreColor, getCategoryLabel } from '@/lib/constants';
 import { ChainBadge } from '@/components/dashboard/chain-badge';
 
 interface SearchModalProps {
   open: boolean;
   onClose: () => void;
+  projects: Project[];
 }
 
-// Projects with biggest absolute score changes for "Trending"
-const trendingProjects = [...projects]
-  .sort((a, b) => Math.abs(b.scoreTrend24h) - Math.abs(a.scoreTrend24h))
-  .slice(0, 5);
-
-export function SearchModal({ open, onClose }: SearchModalProps) {
+export function SearchModal({ open, onClose, projects }: SearchModalProps) {
   const [query, setQuery] = useState('');
 
   const results = query.length > 0
@@ -29,16 +24,15 @@ export function SearchModal({ open, onClose }: SearchModalProps) {
       ).slice(0, 8)
     : [];
 
-  // Keyboard shortcut
+  const trendingProjects = [...projects]
+    .sort((a, b) => Math.abs(b.scoreTrend24h) - Math.abs(a.scoreTrend24h))
+    .slice(0, 5);
+
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
         if (open) onClose();
-        else {
-          setQuery('');
-          // trigger open from parent - we need to use a callback for this
-        }
       }
       if (e.key === 'Escape' && open) {
         onClose();
@@ -47,17 +41,6 @@ export function SearchModal({ open, onClose }: SearchModalProps) {
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
   }, [open, onClose]);
-
-  // Open via ⌘K from outside
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault();
-      }
-    };
-    window.addEventListener('keydown', handler);
-    return () => window.removeEventListener('keydown', handler);
-  }, []);
 
   if (!open) return null;
 
@@ -68,7 +51,6 @@ export function SearchModal({ open, onClose }: SearchModalProps) {
         className="relative z-10 w-full max-w-xl rounded-xl border border-border bg-card shadow-2xl"
         onClick={e => e.stopPropagation()}
       >
-        {/* Search input */}
         <div className="flex items-center gap-3 border-b border-border px-4 py-3">
           <Search className="h-5 w-5 text-muted-foreground" />
           <input
@@ -88,7 +70,6 @@ export function SearchModal({ open, onClose }: SearchModalProps) {
         </div>
 
         <div className="max-h-[400px] overflow-y-auto p-2">
-          {/* Search results */}
           {query.length > 0 ? (
             results.length > 0 ? (
               <div>
@@ -130,36 +111,33 @@ export function SearchModal({ open, onClose }: SearchModalProps) {
               </p>
             )
           ) : (
-            <>
-              {/* Trending */}
-              <div>
-                <p className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium uppercase text-muted-foreground">
-                  <TrendingUp className="h-3.5 w-3.5" />
-                  Trending
-                </p>
-                {trendingProjects.map(project => (
-                  <Link
-                    key={project.id}
-                    href={`/project/${project.slug}`}
-                    onClick={onClose}
-                    className="flex items-center justify-between rounded-lg px-3 py-2 transition-colors hover:bg-accent"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div
-                        className="flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold text-white"
-                        style={{ backgroundColor: `hsl(${(project.name.charCodeAt(0) * 7) % 360}, 60%, 45%)` }}
-                      >
-                        {project.name.charAt(0)}
-                      </div>
-                      <span className="text-sm font-medium text-foreground">{project.name}</span>
+            <div>
+              <p className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium uppercase text-muted-foreground">
+                <TrendingUp className="h-3.5 w-3.5" />
+                Trending
+              </p>
+              {trendingProjects.map(project => (
+                <Link
+                  key={project.id}
+                  href={`/project/${project.slug}`}
+                  onClick={onClose}
+                  className="flex items-center justify-between rounded-lg px-3 py-2 transition-colors hover:bg-accent"
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold text-white"
+                      style={{ backgroundColor: `hsl(${(project.name.charCodeAt(0) * 7) % 360}, 60%, 45%)` }}
+                    >
+                      {project.name.charAt(0)}
                     </div>
-                    <span className={`font-mono text-sm font-medium ${project.scoreTrend24h >= 0 ? 'text-emerald' : 'text-red'}`}>
-                      {project.scoreTrend24h >= 0 ? '+' : ''}{project.scoreTrend24h}%
-                    </span>
-                  </Link>
-                ))}
-              </div>
-            </>
+                    <span className="text-sm font-medium text-foreground">{project.name}</span>
+                  </div>
+                  <span className={`font-mono text-sm font-medium ${project.scoreTrend24h >= 0 ? 'text-emerald' : 'text-red'}`}>
+                    {project.scoreTrend24h >= 0 ? '+' : ''}{project.scoreTrend24h}%
+                  </span>
+                </Link>
+              ))}
+            </div>
           )}
         </div>
       </div>

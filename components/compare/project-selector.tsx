@@ -2,29 +2,28 @@
 
 import { useState } from 'react';
 import { Search, X } from 'lucide-react';
-import { projects } from '@/lib/mock-data';
 import { Project } from '@/lib/types';
 import { getScoreColor } from '@/lib/constants';
 
 interface ProjectSelectorProps {
+  allProjects: Project[];
   selected: Project[];
   onAdd: (project: Project) => void;
   onRemove: (projectId: string) => void;
   maxProjects?: number;
 }
 
-export function ProjectSelector({ selected, onAdd, onRemove, maxProjects = 4 }: ProjectSelectorProps) {
+export function ProjectSelector({ allProjects, selected, onAdd, onRemove, maxProjects = 4 }: ProjectSelectorProps) {
   const [query, setQuery] = useState('');
   const [isOpen, setIsOpen] = useState(false);
 
-  const available = projects.filter(
+  const available = allProjects.filter(
     p => !selected.some(s => s.id === p.id) &&
     (query.length === 0 || p.name.toLowerCase().includes(query.toLowerCase()))
   ).slice(0, 6);
 
   return (
     <div className="space-y-3">
-      {/* Selected projects */}
       <div className="flex flex-wrap gap-2">
         {selected.map(p => (
           <span
@@ -43,7 +42,6 @@ export function ProjectSelector({ selected, onAdd, onRemove, maxProjects = 4 }: 
         ))}
       </div>
 
-      {/* Search input */}
       {selected.length < maxProjects && (
         <div className="relative">
           <div className="flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2">
@@ -58,7 +56,7 @@ export function ProjectSelector({ selected, onAdd, onRemove, maxProjects = 4 }: 
             />
           </div>
 
-          {isOpen && (query.length > 0 || true) && (
+          {isOpen && (
             <div className="absolute z-10 mt-1 w-full rounded-lg border border-border bg-card shadow-lg">
               {available.map(p => (
                 <button

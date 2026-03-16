@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Search, Sun, Moon, Menu, X } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
+import { Project } from '@/lib/types';
 import { SearchModal } from './search-modal';
 
 const NAV_LINKS = [
@@ -20,6 +21,27 @@ export function Header() {
   const { theme, setTheme } = useTheme();
   const [searchOpen, setSearchOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [searchProjects, setSearchProjects] = useState<Project[]>([]);
+
+  // Fetch projects for search on mount
+  useEffect(() => {
+    async function load() {
+      try {
+        const { getAllProjects } = await import('@/lib/data/queries');
+        const projects = await getAllProjects();
+        if (projects.length > 0) {
+          setSearchProjects(projects);
+        } else {
+          const { projects: mock } = await import('@/lib/mock-data');
+          setSearchProjects(mock);
+        }
+      } catch {
+        const { projects: mock } = await import('@/lib/mock-data');
+        setSearchProjects(mock);
+      }
+    }
+    load();
+  }, []);
 
   return (
     <>
@@ -84,7 +106,7 @@ export function Header() {
             </button>
 
             <Link
-              href="/about#get-scored"
+              href="/submit"
               className="hidden items-center gap-2 rounded-lg border border-teal px-4 py-2 text-sm font-medium text-teal transition-colors hover:bg-teal/10 sm:flex"
             >
               Get Scored
@@ -120,7 +142,7 @@ export function Header() {
                 </Link>
               ))}
               <Link
-                href="/about#get-scored"
+                href="/submit"
                 onClick={() => setMobileMenuOpen(false)}
                 className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg border border-teal px-4 py-2 text-sm font-medium text-teal"
               >
@@ -131,7 +153,7 @@ export function Header() {
         )}
       </header>
 
-      <SearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
+      <SearchModal open={searchOpen} onClose={() => setSearchOpen(false)} projects={searchProjects} />
     </>
   );
 }
