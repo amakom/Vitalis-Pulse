@@ -10,6 +10,7 @@ export function mapToDisplayProject(
     id: p.id,
     slug: p.slug,
     name: p.name,
+    logo_url: p.logo_url || null,
     chain: p.chain,
     category: p.category,
     vitalisScore: s?.vitalis_score || 0,

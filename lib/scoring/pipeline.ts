@@ -115,6 +115,51 @@ export async function scoreProject(projectId: string): Promise<void> {
   console.log(`[Pipeline] ${project.name}: Score ${result.vitalisScore} (${result.dev_grade})`);
 }
 
+// Score the single oldest-scored project (fits within 60s Hobby limit)
+export async function scoreNextProject(): Promise<{ projectId: string; projectName: string; score: number } | { projectId: null }> {
+  // Find the project with the oldest scored_at, or one that hasn't been scored yet
+  const { data: projects } = await supabaseAdmin
+    .from('projects')
+    .select('id, name')
+    .eq('is_active', true);
+
+  if (!projects || projects.length === 0) return { projectId: null };
+
+  // Get all current scores to find the oldest
+  const { data: scores } = await supabaseAdmin
+    .from('current_scores')
+    .select('project_id, scored_at')
+    .order('scored_at', { ascending: true });
+
+  const scoredMap = new Map(scores?.map(s => [s.project_id, s.scored_at]) || []);
+
+  // Prioritize unscored projects, then oldest scored
+  let target = projects.find(p => !scoredMap.has(p.id));
+  if (!target) {
+    // All scored — pick the one scored longest ago
+    target = projects.sort((a, b) => {
+      const aTime = scoredMap.get(a.id) || '1970-01-01';
+      const bTime = scoredMap.get(b.id) || '1970-01-01';
+      return aTime < bTime ? -1 : 1;
+    })[0];
+  }
+
+  if (!target) return { projectId: null };
+
+  try {
+    await scoreProject(target.id);
+    const { data: newScore } = await supabaseAdmin
+      .from('current_scores')
+      .select('vitalis_score')
+      .eq('project_id', target.id)
+      .single();
+    return { projectId: target.id, projectName: target.name, score: newScore?.vitalis_score || 0 };
+  } catch (err) {
+    console.error(`[Pipeline] Error scoring ${target.name}:`, err);
+    return { projectId: target.id, projectName: target.name, score: -1 };
+  }
+}
+
 export async function scoreAllProjects(): Promise<{ scored: number; errors: number }> {
   const { data: projects } = await supabaseAdmin
     .from('projects')

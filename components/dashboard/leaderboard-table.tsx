@@ -109,12 +109,16 @@ export function LeaderboardTable({ projects, initialChain = 'all' }: Leaderboard
                   <td className="px-4 py-3 font-mono text-muted-foreground">{rank}</td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
-                      <div
-                        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white"
-                        style={{ backgroundColor: `hsl(${(project.name.charCodeAt(0) * 7 + project.name.charCodeAt(1) * 3) % 360}, 55%, 45%)` }}
-                      >
-                        {project.name.charAt(0)}
-                      </div>
+                      {project.logo_url ? (
+                        <img src={project.logo_url} alt={project.name} className="h-8 w-8 shrink-0 rounded-full" />
+                      ) : (
+                        <div
+                          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white"
+                          style={{ backgroundColor: `hsl(${(project.name.charCodeAt(0) * 7 + project.name.charCodeAt(1) * 3) % 360}, 55%, 45%)` }}
+                        >
+                          {project.name.charAt(0)}
+                        </div>
+                      )}
                       <div>
                         <span className="font-medium text-foreground">{project.name}</span>
                         <div className="mt-0.5">
@@ -189,12 +193,16 @@ export function LeaderboardTable({ projects, initialChain = 'all' }: Leaderboard
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <span className="font-mono text-sm text-muted-foreground">#{rank}</span>
-                  <div
-                    className="flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold text-white"
-                    style={{ backgroundColor: `hsl(${(project.name.charCodeAt(0) * 7 + project.name.charCodeAt(1) * 3) % 360}, 55%, 45%)` }}
-                  >
-                    {project.name.charAt(0)}
-                  </div>
+                  {project.logo_url ? (
+                    <img src={project.logo_url} alt={project.name} className="h-8 w-8 rounded-full" />
+                  ) : (
+                    <div
+                      className="flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold text-white"
+                      style={{ backgroundColor: `hsl(${(project.name.charCodeAt(0) * 7 + project.name.charCodeAt(1) * 3) % 360}, 55%, 45%)` }}
+                    >
+                      {project.name.charAt(0)}
+                    </div>
+                  )}
                   <div>
                     <p className="font-medium">{project.name}</p>
                     <ChainBadge chain={project.chain} />

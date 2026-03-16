@@ -18,6 +18,7 @@ export interface Project {
   id: string;
   slug: string;
   name: string;
+  logo_url?: string | null;
   chain: Chain;
   category: Category;
   vitalisScore: number;
