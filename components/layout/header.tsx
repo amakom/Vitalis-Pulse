@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Search, Sun, Moon, Wallet, Menu, X } from 'lucide-react';
+import { Search, Sun, Moon, Menu, X } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import { SearchModal } from './search-modal';
@@ -83,10 +83,12 @@ export function Header() {
               <span className="sr-only">Toggle theme</span>
             </button>
 
-            <button className="hidden items-center gap-2 rounded-lg bg-teal px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-teal/90 sm:flex">
-              <Wallet className="h-4 w-4" />
-              Connect Wallet
-            </button>
+            <Link
+              href="/about#get-scored"
+              className="hidden items-center gap-2 rounded-lg border border-teal px-4 py-2 text-sm font-medium text-teal transition-colors hover:bg-teal/10 sm:flex"
+            >
+              Get Scored
+            </Link>
 
             {/* Mobile menu button */}
             <button
@@ -117,10 +119,13 @@ export function Header() {
                   {link.label}
                 </Link>
               ))}
-              <button className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg bg-teal px-4 py-2 text-sm font-medium text-white">
-                <Wallet className="h-4 w-4" />
-                Connect Wallet
-              </button>
+              <Link
+                href="/about#get-scored"
+                onClick={() => setMobileMenuOpen(false)}
+                className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg border border-teal px-4 py-2 text-sm font-medium text-teal"
+              >
+                Get Scored
+              </Link>
             </nav>
           </div>
         )}
