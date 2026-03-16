@@ -23,10 +23,10 @@ export default async function HomePage() {
 
       {/* Hero */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">
+        <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
           Project Leaderboard
         </h1>
-        <p className="mt-1 text-muted-foreground">
+        <p className="mt-1 text-sm text-muted-foreground sm:text-base">
           The heartbeat of Web3 — real-time health scores for {displayProjects.length} projects
         </p>
       </div>

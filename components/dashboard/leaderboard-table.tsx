@@ -227,7 +227,7 @@ export function LeaderboardTable({ projects, initialChain = 'all' }: Leaderboard
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between border-t border-border pt-4">
+        <div className="flex flex-col items-center gap-3 border-t border-border pt-4 sm:flex-row sm:justify-between">
           <p className="text-sm text-muted-foreground">
             Showing {page * PAGE_SIZE + 1}–{Math.min((page + 1) * PAGE_SIZE, filtered.length)} of {filtered.length}
           </p>
@@ -239,23 +239,28 @@ export function LeaderboardTable({ projects, initialChain = 'all' }: Leaderboard
             >
               Previous
             </button>
-            {pageButtons.map((p, idx) =>
-              p === ('ellipsis' as unknown as number) ? (
-                <span key={`e-${idx}`} className="flex items-center px-2 text-muted-foreground">...</span>
-              ) : (
-                <button
-                  key={p}
-                  onClick={() => setPage(p as number)}
-                  className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
-                    page === p
-                      ? 'bg-teal text-white'
-                      : 'border border-border bg-card hover:bg-accent'
-                  }`}
-                >
-                  {(p as number) + 1}
-                </button>
-              )
-            )}
+            <span className="hidden sm:contents">
+              {pageButtons.map((p, idx) =>
+                p === ('ellipsis' as unknown as number) ? (
+                  <span key={`e-${idx}`} className="flex items-center px-2 text-muted-foreground">...</span>
+                ) : (
+                  <button
+                    key={p}
+                    onClick={() => setPage(p as number)}
+                    className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
+                      page === p
+                        ? 'bg-teal text-white'
+                        : 'border border-border bg-card hover:bg-accent'
+                    }`}
+                  >
+                    {(p as number) + 1}
+                  </button>
+                )
+              )}
+            </span>
+            <span className="flex items-center px-2 text-sm text-muted-foreground sm:hidden">
+              {page + 1} / {totalPages}
+            </span>
             <button
               onClick={() => setPage(Math.min(totalPages - 1, page + 1))}
               disabled={page === totalPages - 1}

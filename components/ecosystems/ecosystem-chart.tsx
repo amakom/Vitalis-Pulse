@@ -19,7 +19,7 @@ export function EcosystemChart({ data }: EcosystemChartProps) {
     }));
 
   return (
-    <div className="h-64">
+    <div className="h-48 sm:h-64">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={chartData} layout="vertical" margin={{ left: 10 }}>
           <XAxis

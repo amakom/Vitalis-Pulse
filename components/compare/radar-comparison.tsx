@@ -37,7 +37,7 @@ export function RadarComparison({ projects }: RadarComparisonProps) {
   });
 
   return (
-    <div className="h-[400px]">
+    <div className="h-[280px] sm:h-[400px]">
       <ResponsiveContainer width="100%" height="100%">
         <RadarChart data={data}>
           <PolarGrid stroke="#1E3A5F" />

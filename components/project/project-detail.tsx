@@ -107,26 +107,26 @@ export function ProjectDetail({ project, isMock }: ProjectDetailProps) {
       </div>
 
       {/* Score Breakdown Sections */}
-      <div className="space-y-8">
-        <div className="rounded-xl border border-border bg-card p-6">
+      <div className="space-y-6 sm:space-y-8">
+        <div className="rounded-xl border border-border bg-card p-4 sm:p-6">
           <TreasurySection project={project} subScore={subScores.treasury} />
         </div>
-        <div className="rounded-xl border border-border bg-card p-6">
+        <div className="rounded-xl border border-border bg-card p-4 sm:p-6">
           <DevelopmentSection project={project} subScore={subScores.development} />
         </div>
-        <div className="rounded-xl border border-border bg-card p-6">
+        <div className="rounded-xl border border-border bg-card p-4 sm:p-6">
           <CommunitySection project={project} subScore={subScores.community} />
         </div>
-        <div className="rounded-xl border border-border bg-card p-6">
+        <div className="rounded-xl border border-border bg-card p-4 sm:p-6">
           <RevenueSection project={project} subScore={subScores.revenue} />
         </div>
-        <div className="rounded-xl border border-border bg-card p-6">
+        <div className="rounded-xl border border-border bg-card p-4 sm:p-6">
           <GovernanceSection project={project} subScore={subScores.governance} />
         </div>
       </div>
 
       {/* Bottom section */}
-      <div className="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-xl border border-border bg-card p-6">
+      <div className="mt-8 flex flex-col gap-4 rounded-xl border border-border bg-card p-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:p-6">
         <div className="flex items-center gap-3">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="text-teal">
             <path d="M3 12h4l3-9 4 18 3-9h4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />

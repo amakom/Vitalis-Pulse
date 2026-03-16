@@ -19,11 +19,11 @@ export default async function EcosystemsPage() {
       )}
 
       <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">Ecosystems</h1>
-        <p className="mt-1 text-muted-foreground">Health overview by blockchain ecosystem</p>
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Ecosystems</h1>
+        <p className="mt-1 text-sm text-muted-foreground sm:text-base">Health overview by blockchain ecosystem</p>
       </div>
 
-      <div className="mb-8 rounded-xl border border-border bg-card p-6">
+      <div className="mb-8 rounded-xl border border-border bg-card p-4 sm:p-6">
         <h2 className="mb-4 text-lg font-semibold">Average Vitalis Score by Ecosystem</h2>
         <EcosystemChart data={data} />
       </div>

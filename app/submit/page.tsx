@@ -52,7 +52,7 @@ export default function SubmitPage() {
 
   if (submitted) {
     return (
-      <div className="mx-auto max-w-2xl px-4 py-20 text-center">
+      <div className="mx-auto max-w-2xl px-4 py-10 text-center sm:py-20">
         <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-full bg-teal/10">
           <CheckCircle className="h-8 w-8 text-teal" />
         </div>
@@ -75,15 +75,15 @@ export default function SubmitPage() {
       </Link>
 
       <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">Get Your Project Scored</h1>
-        <p className="mt-2 text-muted-foreground">
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Get Your Project Scored</h1>
+        <p className="mt-2 text-sm text-muted-foreground sm:text-base">
           Submit your project for a Vitalis health score. We&apos;ll collect data from public APIs and generate your score within 48 hours.
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Required fields */}
-        <div className="rounded-xl border border-border bg-card p-6 space-y-4">
+        <div className="rounded-xl border border-border bg-card p-4 space-y-4 sm:p-6">
           <h2 className="text-lg font-semibold">Project Details</h2>
 
           <div>
@@ -144,7 +144,7 @@ export default function SubmitPage() {
         </div>
 
         {/* Data sources */}
-        <div className="rounded-xl border border-border bg-card p-6 space-y-4">
+        <div className="rounded-xl border border-border bg-card p-4 space-y-4 sm:p-6">
           <h2 className="text-lg font-semibold">Data Sources</h2>
           <p className="text-sm text-muted-foreground">These help us collect accurate data. All optional.</p>
 
@@ -196,7 +196,7 @@ export default function SubmitPage() {
         </div>
 
         {/* Contact */}
-        <div className="rounded-xl border border-border bg-card p-6 space-y-4">
+        <div className="rounded-xl border border-border bg-card p-4 space-y-4 sm:p-6">
           <h2 className="text-lg font-semibold">Contact</h2>
 
           <div>

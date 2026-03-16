@@ -135,8 +135,8 @@ export default function AdminPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 lg:px-6">
-      <div className="mb-8 flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Admin Panel</h1>
+      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="text-2xl font-bold sm:text-3xl">Admin Panel</h1>
         <div className="flex gap-2">
           <button
             onClick={loadData}
@@ -177,10 +177,10 @@ export default function AdminPage() {
         </div>
       </div>
 
-      {/* Projects table */}
+      {/* Projects table - desktop */}
       <div className="mb-8">
         <h2 className="mb-4 text-lg font-semibold">Projects</h2>
-        <div className="overflow-x-auto rounded-xl border border-border">
+        <div className="hidden overflow-x-auto rounded-xl border border-border md:block">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border bg-muted/50">
@@ -217,6 +217,35 @@ export default function AdminPage() {
             </tbody>
           </table>
         </div>
+        {/* Projects cards - mobile */}
+        <div className="space-y-3 md:hidden">
+          {projects.map(p => (
+            <div key={p.id} className="rounded-xl border border-border bg-card p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">{p.name}</p>
+                  <p className="text-xs text-muted-foreground">{p.chain}</p>
+                </div>
+                <span className="font-mono text-lg font-semibold">
+                  {p.score?.vitalis_score ?? '—'}
+                </span>
+              </div>
+              <div className="mt-2 flex items-center justify-between">
+                <span className="text-xs text-muted-foreground">
+                  {p.score?.scored_at ? new Date(p.score.scored_at).toLocaleString() : 'Never scored'}
+                </span>
+                <button
+                  onClick={() => scoreProject(p.id)}
+                  disabled={scoringId === p.id}
+                  className="flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs hover:bg-accent disabled:opacity-50"
+                >
+                  {scoringId === p.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <RefreshCw className="h-3 w-3" />}
+                  Rescore
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Submissions table */}
@@ -225,7 +254,9 @@ export default function AdminPage() {
         {submissions.length === 0 ? (
           <p className="text-sm text-muted-foreground">No submissions yet.</p>
         ) : (
-          <div className="overflow-x-auto rounded-xl border border-border">
+          <>
+          {/* Submissions table - desktop */}
+          <div className="hidden overflow-x-auto rounded-xl border border-border md:block">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border bg-muted/50">
@@ -278,6 +309,49 @@ export default function AdminPage() {
               </tbody>
             </table>
           </div>
+          {/* Submissions cards - mobile */}
+          <div className="space-y-3 md:hidden">
+            {submissions.map(s => (
+              <div key={s.id} className="rounded-xl border border-border bg-card p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium">{s.name}</p>
+                    <p className="truncate text-xs text-muted-foreground">{s.website}</p>
+                  </div>
+                  <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                    s.status === 'approved' ? 'bg-emerald-500/10 text-emerald-400' :
+                    s.status === 'rejected' ? 'bg-red-500/10 text-red-400' :
+                    'bg-amber-500/10 text-amber-400'
+                  }`}>
+                    {s.status}
+                  </span>
+                </div>
+                <div className="mt-2 flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <span>{s.chain}</span>
+                    <span>{new Date(s.submitted_at).toLocaleDateString()}</span>
+                  </div>
+                  {s.status === 'pending' && (
+                    <div className="flex gap-1">
+                      <button
+                        onClick={() => updateSubmission(s.id, 'approved')}
+                        className="rounded-md bg-emerald-500/10 p-1 text-emerald-400 hover:bg-emerald-500/20"
+                      >
+                        <CheckCircle className="h-4 w-4" />
+                      </button>
+                      <button
+                        onClick={() => updateSubmission(s.id, 'rejected')}
+                        className="rounded-md bg-red-500/10 p-1 text-red-400 hover:bg-red-500/20"
+                      >
+                        <XCircle className="h-4 w-4" />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+          </>
         )}
       </div>
     </div>

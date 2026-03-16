@@ -55,8 +55,8 @@ export function TreasurySection({ project, subScore }: TreasurySectionProps) {
       {/* Chart */}
       <div className="rounded-lg border border-border bg-card p-4">
         <p className="mb-3 text-sm font-medium text-muted-foreground">Treasury Composition</p>
-        <div className="flex items-center gap-6">
-          <div className="h-48 w-48">
+        <div className="flex flex-col items-center gap-4 sm:flex-row sm:gap-6">
+          <div className="h-40 w-40 shrink-0 sm:h-48 sm:w-48">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie

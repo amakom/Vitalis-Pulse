@@ -32,8 +32,8 @@ export function CompareClient({ allProjects }: CompareClientProps) {
   return (
     <>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">Compare Projects</h1>
-        <p className="mt-1 text-muted-foreground">Side-by-side health score comparison for up to 4 projects</p>
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Compare Projects</h1>
+        <p className="mt-1 text-sm text-muted-foreground sm:text-base">Side-by-side health score comparison for up to 4 projects</p>
       </div>
 
       <div className="mb-8">
@@ -47,14 +47,14 @@ export function CompareClient({ allProjects }: CompareClientProps) {
 
       {selected.length >= 2 && (
         <>
-          <div className="mb-8 rounded-xl border border-border bg-card p-6">
+          <div className="mb-8 rounded-xl border border-border bg-card p-4 sm:p-6">
             <h2 className="mb-4 text-lg font-semibold">Score Comparison</h2>
             <RadarComparison projects={selected} />
           </div>
 
-          <div className="mb-8 grid gap-4" style={{ gridTemplateColumns: `repeat(${selected.length}, 1fr)` }}>
+          <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {selected.map(project => (
-              <div key={project.id} className="rounded-xl border border-border bg-card p-5">
+              <div key={project.id} className="rounded-xl border border-border bg-card p-4 sm:p-5">
                 <div className="mb-4 flex flex-col items-center gap-3">
                   <ScoreRing score={project.vitalisScore} size="md" />
                   <div className="text-center">
@@ -133,7 +133,7 @@ export function CompareClient({ allProjects }: CompareClientProps) {
       )}
 
       {selected.length < 2 && (
-        <div className="rounded-xl border border-dashed border-border bg-card/50 p-12 text-center">
+        <div className="rounded-xl border border-dashed border-border bg-card/50 p-8 text-center sm:p-12">
           <p className="text-muted-foreground">Select at least 2 projects to compare</p>
         </div>
       )}
