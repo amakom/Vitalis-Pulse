@@ -29,6 +29,11 @@ export function ProjectDetail({ project, isMock }: ProjectDetailProps) {
   const [embedModalOpen, setEmbedModalOpen] = useState(false);
   const [embedCopied, setEmbedCopied] = useState(false);
 
+  // Scroll to top on mount
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   // Check watchlist state from localStorage
   useEffect(() => {
     const watchlist = JSON.parse(localStorage.getItem('vitalis-watchlist') || '[]');
