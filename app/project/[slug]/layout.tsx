@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
+import { getProject } from "@/lib/data/queries";
 import { getProjectBySlug } from "@/lib/mock-data";
 import { getScoreTier } from "@/lib/constants";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const project = getProjectBySlug(slug);
+
+  // Try live data first, fall back to mock
+  const project = await getProject(slug) || getProjectBySlug(slug);
 
   if (!project) {
     return { title: "Project Not Found — VitalisPulse" };

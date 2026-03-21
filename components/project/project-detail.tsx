@@ -131,7 +131,7 @@ export function ProjectDetail({ project, isMock }: ProjectDetailProps) {
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="text-teal">
             <path d="M3 12h4l3-9 4 18 3-9h4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
-          <span className="text-sm text-muted-foreground">Powered by Vitalis</span>
+          <span className="text-sm text-muted-foreground">Powered by VitalisPulse</span>
         </div>
         <div className="flex gap-2">
           <button className="rounded-lg border border-border px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent">

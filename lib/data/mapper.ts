@@ -21,7 +21,7 @@ export function mapToDisplayProject(
       runwayMonths: s?.treasury_runway_months || 0,
       diversificationGrade: (s?.treasury_diversification_grade || 'F') as Grade,
       composition: s?.treasury_composition || [],
-      stablecoinRatio: s?.treasury_stablecoin_ratio || 0,
+      stablecoinRatio: Math.min(s?.treasury_stablecoin_ratio || 0, 1), // Cap at 1.0 (100%)
       monthlyBurnUsd: s?.treasury_monthly_burn || 0,
     },
     development: {

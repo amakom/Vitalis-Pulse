@@ -47,15 +47,20 @@ export async function scoreProject(projectId: string): Promise<void> {
     },
   });
 
-  // 5. Get previous score for trend calculation
-  const { data: prevScore } = await supabaseAdmin
-    .from('current_scores')
+  // 5. Get previous score for trend calculation (from score_history, not current_scores)
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  const { data: prevHistory } = await supabaseAdmin
+    .from('score_history')
     .select('vitalis_score')
     .eq('project_id', projectId)
+    .lt('recorded_at', yesterday.toISOString())
+    .order('recorded_at', { ascending: false })
+    .limit(1)
     .single();
 
-  const trend24h = prevScore
-    ? Number(((result.vitalisScore - prevScore.vitalis_score) / Math.max(prevScore.vitalis_score, 1) * 100).toFixed(1))
+  const trend24h = prevHistory
+    ? Number(((result.vitalisScore - prevHistory.vitalis_score) / Math.max(prevHistory.vitalis_score, 1) * 100).toFixed(1))
     : 0;
 
   // 6. Upsert current score

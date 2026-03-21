@@ -247,7 +247,14 @@ function getDevGrade(devScore: number): string {
 }
 
 function getRunwayMonths(tvl: number, monthlyBurn: number): number {
-  if (monthlyBurn <= 0) return 0;
+  if (monthlyBurn <= 0) {
+    // No burn data: estimate runway based on TVL size
+    if (tvl >= 100_000_000) return 60;  // $100M+ TVL → 5+ years
+    if (tvl >= 10_000_000) return 36;   // $10M+ TVL → 3 years
+    if (tvl >= 1_000_000) return 18;    // $1M+ TVL → 18 months
+    if (tvl > 0) return 12;             // Any TVL → 12 months
+    return 0;
+  }
   return Math.min(Math.round(tvl / monthlyBurn), 60);
 }
 
@@ -344,7 +351,8 @@ export function calculateScore(input: ScoringInput): ScoringOutput {
   const composition = getTreasuryComposition(input.defillama, input.coingecko);
   const revTrend = getRevenueTrend(input.defillama.revenue_history);
   const revenuePositive = input.defillama.monthly_revenue > 0;
-  const stablecoinRatio = composition.find(c => c.label === 'Stablecoins')?.percentage || 0;
+  const stablecoinPct = composition.find(c => c.label === 'Stablecoins')?.percentage || 0;
+  const stablecoinRatio = stablecoinPct / 100; // Store as decimal (0.25 = 25%)
   const burnMultiple = estimatedBurn > 0 && input.defillama.monthly_revenue > 0
     ? Number((estimatedBurn / input.defillama.monthly_revenue).toFixed(2))
     : 0;
