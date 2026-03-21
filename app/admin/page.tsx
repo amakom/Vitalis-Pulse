@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { RefreshCw, Play, CheckCircle, XCircle, Loader2 } from 'lucide-react';
+import { RefreshCw, Play, CheckCircle, XCircle, Loader2, LogOut } from 'lucide-react';
 
 interface ProjectRow {
   id: string;
@@ -138,6 +138,12 @@ export default function AdminPage() {
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl font-bold sm:text-3xl">Admin Panel</h1>
         <div className="flex gap-2">
+          <button
+            onClick={() => { setAuthed(false); setKey(''); setProjects([]); setSubmissions([]); setMessage(''); }}
+            className="flex items-center gap-1.5 rounded-lg border border-red-500/30 px-3 py-1.5 text-sm text-red-400 hover:bg-red-500/10"
+          >
+            <LogOut className="h-4 w-4" /> Logout
+          </button>
           <button
             onClick={loadData}
             className="flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-sm hover:bg-accent"
