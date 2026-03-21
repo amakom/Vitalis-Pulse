@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { ChevronDown, ChevronUp, ExternalLink } from 'lucide-react';
 import { SCORE_TIERS } from '@/lib/constants';
 
@@ -39,20 +40,20 @@ const METHODOLOGY = [
 
 const FAQ_ITEMS = [
   {
-    question: 'Is Vitalis free?',
-    answer: 'Yes, Vitalis scores are free and publicly accessible. We believe transparency in Web3 project health benefits the entire ecosystem. Premium features like API access and custom alerts will be available in the future.',
+    question: 'Is VitalisPulse free?',
+    answer: 'Yes, VitalisPulse scores are free and publicly accessible. We believe transparency in Web3 project health benefits the entire ecosystem. Premium features like API access and custom alerts will be available in the future.',
   },
   {
     question: 'How often are scores updated?',
-    answer: 'Vitalis scores are recalculated every 6 hours using the latest on-chain data, GitHub activity, and governance metrics. Treasury data updates in real-time as on-chain transactions occur.',
+    answer: 'VitalisPulse scores are recalculated every 6 hours using the latest on-chain data, GitHub activity, and governance metrics. Treasury data updates in real-time as on-chain transactions occur.',
   },
   {
     question: 'Can projects manipulate their score?',
-    answer: 'We employ multiple anti-gaming measures including anomaly detection, commit quality analysis (not just quantity), Sybil-resistant community metrics, and weighted historical data. While no system is perfect, gaming the Vitalis score requires genuine, sustained improvement across multiple dimensions.',
+    answer: 'We employ multiple anti-gaming measures including anomaly detection, commit quality analysis (not just quantity), Sybil-resistant community metrics, and weighted historical data. While no system is perfect, gaming the VitalisPulse score requires genuine, sustained improvement across multiple dimensions.',
   },
   {
     question: 'How do I get my project scored?',
-    answer: 'Vitalis automatically indexes projects that meet minimum criteria: deployed smart contracts, public GitHub repositories, and on-chain treasury. If your project qualifies but isn\'t listed, submit a request through our GitHub and we\'ll review it within 48 hours.',
+    answer: 'VitalisPulse automatically indexes projects that meet minimum criteria: deployed smart contracts, public GitHub repositories, and on-chain treasury. If your project qualifies but isn\'t listed, submit a request through our GitHub and we\'ll review it within 48 hours.',
   },
   {
     question: 'What chains are supported?',
@@ -60,7 +61,7 @@ const FAQ_ITEMS = [
   },
   {
     question: 'Is there an API?',
-    answer: 'An API is coming soon. It will provide programmatic access to Vitalis scores, historical data, and project metrics. Early access is available for researchers and builders — reach out on Twitter/X to join the waitlist.',
+    answer: 'An API is coming soon. It will provide programmatic access to VitalisPulse scores, historical data, and project metrics. Early access is available for researchers and builders — reach out on Twitter/X (@vitalispulse) to join the waitlist.',
   },
 ];
 
@@ -75,7 +76,7 @@ export default function AboutPage() {
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" className="text-teal">
             <path d="M3 12h4l3-9 4 18 3-9h4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
-          <span className="text-2xl font-bold">vitalis</span>
+          <span className="text-2xl font-bold">VitalisPulse</span>
         </div>
         <h1 className="text-4xl font-bold tracking-tight">The Heartbeat of Web3</h1>
         <p className="mx-auto mt-3 max-w-2xl text-lg text-muted-foreground">
@@ -85,13 +86,13 @@ export default function AboutPage() {
 
       {/* What is Vitalis */}
       <section className="mb-12">
-        <h2 className="mb-4 text-2xl font-bold">What is Vitalis?</h2>
+        <h2 className="mb-4 text-2xl font-bold">What is VitalisPulse?</h2>
         <div className="space-y-4 text-muted-foreground">
           <p>
-            Vitalis is an open-data platform that provides health scores for Web3 projects. By aggregating on-chain data, development activity, community metrics, and financial indicators, we generate a single Vitalis Score (0–100) that reflects a project&apos;s operational health and sustainability.
+            VitalisPulse is an open-data platform that provides health scores for Web3 projects. By aggregating on-chain data, development activity, community metrics, and financial indicators, we generate a single Vitalis Score (0–100) that reflects a project&apos;s operational health and sustainability.
           </p>
           <p>
-            Our mission is to bring transparency and accountability to the Web3 ecosystem. Too many projects operate as black boxes — Vitalis shines a light on the fundamentals that matter: Can the project sustain itself? Is the team actively building? Is the community growing or shrinking? Is governance functional?
+            Our mission is to bring transparency and accountability to the Web3 ecosystem. Too many projects operate as black boxes — VitalisPulse shines a light on the fundamentals that matter: Can the project sustain itself? Is the team actively building? Is the community growing or shrinking? Is governance functional?
           </p>
         </div>
       </section>
@@ -221,16 +222,16 @@ export default function AboutPage() {
       {/* CTA */}
       <section className="mb-8 rounded-xl border border-teal/30 bg-teal/5 p-8 text-center">
         <h2 className="text-2xl font-bold">Ready to get your project scored?</h2>
-        <p className="mt-2 text-muted-foreground">Submit your project for evaluation or join the Vitalis community.</p>
+        <p className="mt-2 text-muted-foreground">Submit your project for evaluation or join the VitalisPulse community.</p>
         <div className="mt-6 flex flex-wrap justify-center gap-3">
-          <button className="inline-flex items-center gap-2 rounded-lg bg-teal px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-teal/90">
+          <Link href="/submit" className="inline-flex items-center gap-2 rounded-lg bg-teal px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-teal/90">
             Get Your Project Scored
             <ExternalLink className="h-4 w-4" />
-          </button>
-          <button className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-6 py-2.5 text-sm font-medium transition-colors hover:bg-accent">
+          </Link>
+          <a href="https://x.com/vitalispulse" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-6 py-2.5 text-sm font-medium transition-colors hover:bg-accent">
             Join the Community
             <ExternalLink className="h-4 w-4" />
-          </button>
+          </a>
         </div>
       </section>
     </div>

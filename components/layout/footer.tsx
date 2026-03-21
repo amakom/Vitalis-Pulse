@@ -17,7 +17,7 @@ export function Footer() {
                   strokeLinejoin="round"
                 />
               </svg>
-              <span className="text-base font-bold tracking-tight">vitalis</span>
+              <span className="text-base font-bold tracking-tight">VitalisPulse</span>
             </div>
             <p className="mt-1 text-sm text-muted-foreground">Built for builders. Open data.</p>
           </div>
@@ -29,13 +29,13 @@ export function Footer() {
             <Link href="/compare" className="hover:text-foreground transition-colors">Compare</Link>
             <Link href="/about" className="hover:text-foreground transition-colors">About</Link>
             <span className="cursor-default opacity-50">API Docs</span>
-            <span className="cursor-default opacity-50">Twitter/X</span>
-            <span className="cursor-default opacity-50">GitHub</span>
+            <a href="https://x.com/vitalispulse" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">Twitter/X</a>
+            <a href="https://github.com/vitalispulse" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">GitHub</a>
           </nav>
         </div>
 
         <div className="mt-8 border-t border-border pt-6 text-center text-xs text-muted-foreground">
-          &copy; 2026 Vitalis. All rights reserved.
+          &copy; 2026 VitalisPulse. All rights reserved.
         </div>
       </div>
     </footer>

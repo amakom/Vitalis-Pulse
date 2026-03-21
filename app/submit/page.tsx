@@ -77,7 +77,7 @@ export default function SubmitPage() {
       <div className="mb-8">
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Get Your Project Scored</h1>
         <p className="mt-2 text-sm text-muted-foreground sm:text-base">
-          Submit your project for a Vitalis health score. We&apos;ll collect data from public APIs and generate your score within 48 hours.
+          Submit your project for a VitalisPulse health score. We&apos;ll collect data from public APIs and generate your score within 48 hours.
         </p>
       </div>
 

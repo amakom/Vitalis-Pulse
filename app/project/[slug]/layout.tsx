@@ -7,19 +7,19 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const project = getProjectBySlug(slug);
 
   if (!project) {
-    return { title: "Project Not Found — Vitalis Pulse" };
+    return { title: "Project Not Found — VitalisPulse" };
   }
 
   const tier = getScoreTier(project.vitalisScore);
 
   return {
-    title: `${project.name} — Vitalis Score ${project.vitalisScore} (${tier.label}) | Vitalis Pulse`,
+    title: `${project.name} — Vitalis Score ${project.vitalisScore} (${tier.label}) | VitalisPulse`,
     description: project.healthSummary,
     openGraph: {
       title: `${project.name} — Vitalis Score ${project.vitalisScore}`,
       description: project.healthSummary,
       url: `https://vitalis-pulse.vercel.app/project/${slug}`,
-      siteName: "Vitalis Pulse",
+      siteName: "VitalisPulse",
       type: "website",
     },
     twitter: {

@@ -26,7 +26,7 @@ export async function GET(
     <svg xmlns="http://www.w3.org/2000/svg" width="160" height="28" viewBox="0 0 160 28">
       <rect width="160" height="28" rx="6" fill="#0B1426"/>
       <rect x="1" y="1" width="158" height="26" rx="5" fill="none" stroke="${color}" stroke-width="1" opacity="0.3"/>
-      <text x="12" y="18" font-family="Arial,sans-serif" font-size="11" fill="#94A3B8">vitalis</text>
+      <text x="8" y="18" font-family="Arial,sans-serif" font-size="10" fill="#94A3B8">VitalisPulse</text>
       <text x="56" y="18" font-family="Arial,sans-serif" font-size="11" fill="#64748B">|</text>
       <text x="68" y="18" font-family="monospace" font-size="12" font-weight="bold" fill="${color}">${displayScore}</text>
       <text x="88" y="18" font-family="Arial,sans-serif" font-size="10" fill="#64748B">/ 100</text>
