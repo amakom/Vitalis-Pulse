@@ -23,6 +23,7 @@ export interface CoinGeckoData {
   price_change_30d: number;
   ath: number;
   ath_change_pct: number;
+  logo_url: string | null;
 }
 
 // ── Helpers ──────────────────────────────────
