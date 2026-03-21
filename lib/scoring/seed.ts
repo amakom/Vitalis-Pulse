@@ -65,7 +65,7 @@ export async function seedProjects(): Promise<void> {
   console.log(`Seeding ${SEED_PROJECTS.length} projects...`);
 
   for (const project of SEED_PROJECTS) {
-    const { error } = await supabaseAdmin.from('projects').upsert(project);
+    const { error } = await supabaseAdmin.from('projects').upsert({ ...project, is_active: true });
     if (error) {
       console.error(`Error seeding ${project.name}:`, error);
     } else {
