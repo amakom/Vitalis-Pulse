@@ -8,5 +8,5 @@ export async function POST(req: NextRequest) {
   }
 
   await seedProjects();
-  return NextResponse.json({ success: true, message: '20 projects seeded' });
+  return NextResponse.json({ success: true, message: 'Projects seeded successfully' });
 }
