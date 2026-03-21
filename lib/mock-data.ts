@@ -295,6 +295,9 @@ function generateProject(template: { name: string; category: Category; chain: Ch
   if (runwayMonths > 24) badges.push('vault-active');
   if (score >= 70 && activeDevs > 10) badges.push('mesh-member');
 
+  // Generate sub-scores with realistic variance from main score
+  const subScoreNoise = (seed: number) => Math.max(0, Math.min(100, score + Math.round(((seed * 17 + 7) % 15) - 7)));
+
   return {
     id: `proj-${index.toString().padStart(3, '0')}`,
     slug,
@@ -304,6 +307,13 @@ function generateProject(template: { name: string; category: Category; chain: Ch
     vitalisScore: score,
     scoreHistory: generateScoreHistory(score, 90),
     scoreTrend24h: Math.round(trend24h * 10) / 10,
+    subScores: {
+      treasury: subScoreNoise(1),
+      development: subScoreNoise(2),
+      community: subScoreNoise(3),
+      revenue: subScoreNoise(4),
+      governance: subScoreNoise(5),
+    },
     treasury: {
       totalUsd: Math.round(treasuryBase),
       runwayMonths,

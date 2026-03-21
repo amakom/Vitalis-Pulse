@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Project } from '@/lib/types';
 import { getScoreColor, getCategoryLabel } from '@/lib/constants';
 import { formatCurrency, formatRunway, getRunwayColor } from '@/lib/utils';
@@ -12,6 +12,13 @@ import { RadarComparison } from '@/components/compare/radar-comparison';
 interface CompareClientProps {
   allProjects: Project[];
 }
+
+const SUGGESTED_PAIRS = [
+  { names: ['Aave', 'Compound'], label: 'Lending Giants' },
+  { names: ['Arbitrum', 'Optimism'], label: 'L2 Rivals' },
+  { names: ['Uniswap', 'SushiSwap'], label: 'DEX Battle' },
+  { names: ['Lido', 'Rocket Pool'], label: 'Liquid Staking' },
+];
 
 export function CompareClient({ allProjects }: CompareClientProps) {
   const [selected, setSelected] = useState<Project[]>([
@@ -29,12 +36,49 @@ export function CompareClient({ allProjects }: CompareClientProps) {
     setSelected(selected.filter(p => p.id !== id));
   };
 
+  const handleSuggestedComparison = (names: string[]) => {
+    const found = names
+      .map(name => allProjects.find(p => p.name.toLowerCase() === name.toLowerCase()))
+      .filter(Boolean) as Project[];
+    if (found.length >= 2) {
+      setSelected(found);
+    }
+  };
+
+  // Find which suggested comparisons have matching projects
+  const availableSuggestions = useMemo(() => {
+    return SUGGESTED_PAIRS.filter(pair =>
+      pair.names.filter(name =>
+        allProjects.some(p => p.name.toLowerCase() === name.toLowerCase())
+      ).length >= 2
+    );
+  }, [allProjects]);
+
   return (
     <>
       <div className="mb-8">
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Compare Projects</h1>
         <p className="mt-1 text-sm text-muted-foreground sm:text-base">Side-by-side health score comparison for up to 4 projects</p>
       </div>
+
+      {/* Suggested Comparisons */}
+      {availableSuggestions.length > 0 && (
+        <div className="mb-6">
+          <p className="mb-2 text-sm font-medium text-muted-foreground">Suggested comparisons:</p>
+          <div className="flex flex-wrap gap-2">
+            {availableSuggestions.map(pair => (
+              <button
+                key={pair.label}
+                onClick={() => handleSuggestedComparison(pair.names)}
+                className="rounded-lg border border-border bg-card px-3 py-1.5 text-sm font-medium transition-colors hover:border-teal/30 hover:bg-accent"
+              >
+                {pair.names.join(' vs ')}
+                <span className="ml-1.5 text-xs text-muted-foreground">({pair.label})</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="mb-8">
         <ProjectSelector
@@ -64,11 +108,11 @@ export function CompareClient({ allProjects }: CompareClientProps) {
                 </div>
 
                 {[
-                  { label: 'Treasury', weight: '30%', value: Math.max(0, Math.min(100, project.vitalisScore + (((1 * 13) % 21) - 10))) },
-                  { label: 'Development', weight: '25%', value: Math.max(0, Math.min(100, project.vitalisScore + (((2 * 13) % 21) - 10))) },
-                  { label: 'Community', weight: '20%', value: Math.max(0, Math.min(100, project.vitalisScore + (((3 * 13) % 21) - 10))) },
-                  { label: 'Revenue', weight: '15%', value: Math.max(0, Math.min(100, project.vitalisScore + (((4 * 13) % 21) - 10))) },
-                  { label: 'Governance', weight: '10%', value: Math.max(0, Math.min(100, project.vitalisScore + (((5 * 13) % 21) - 10))) },
+                  { label: 'Treasury', weight: '30%', value: project.subScores.treasury },
+                  { label: 'Development', weight: '25%', value: project.subScores.development },
+                  { label: 'Community', weight: '20%', value: project.subScores.community },
+                  { label: 'Revenue', weight: '15%', value: project.subScores.revenue },
+                  { label: 'Governance', weight: '10%', value: project.subScores.governance },
                 ].map(sub => (
                   <div key={sub.label} className="mb-3">
                     <div className="mb-1 flex items-center justify-between text-xs">

@@ -24,6 +24,19 @@ export interface Project {
   vitalisScore: number;
   scoreHistory: number[];
   scoreTrend24h: number;
+  subScores: {
+    treasury: number;
+    development: number;
+    community: number;
+    revenue: number;
+    governance: number;
+  };
+  externalLinks?: {
+    website?: string;
+    docs?: string;
+    github?: string;
+  };
+  lastScoredAt?: string;
   treasury: {
     totalUsd: number;
     runwayMonths: number;

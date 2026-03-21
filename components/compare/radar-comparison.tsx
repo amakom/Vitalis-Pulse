@@ -9,29 +9,21 @@ interface RadarComparisonProps {
 
 const COLORS = ['#14B8A6', '#F59E0B', '#8B5CF6', '#EF4444'];
 
-function getSubScores(project: Project) {
-  const base = project.vitalisScore;
-  const noise = (seed: number) => Math.round(base + (((seed * 13) % 21) - 10));
-  const clamp = (v: number) => Math.max(0, Math.min(100, v));
-  return {
-    Treasury: clamp(noise(1)),
-    Development: clamp(noise(2)),
-    Community: clamp(noise(3)),
-    Revenue: clamp(noise(4)),
-    Governance: clamp(noise(5)),
-  };
-}
+const SUB_SCORE_KEYS: { label: string; key: keyof Project['subScores'] }[] = [
+  { label: 'Treasury', key: 'treasury' },
+  { label: 'Development', key: 'development' },
+  { label: 'Community', key: 'community' },
+  { label: 'Revenue', key: 'revenue' },
+  { label: 'Governance', key: 'governance' },
+];
 
 export function RadarComparison({ projects }: RadarComparisonProps) {
   if (projects.length === 0) return null;
 
-  const categories = ['Treasury', 'Development', 'Community', 'Revenue', 'Governance'];
-
-  const data = categories.map(cat => {
-    const entry: Record<string, string | number> = { category: cat };
+  const data = SUB_SCORE_KEYS.map(({ label, key }) => {
+    const entry: Record<string, string | number> = { category: label };
     projects.forEach(p => {
-      const scores = getSubScores(p);
-      entry[p.name] = scores[cat as keyof typeof scores];
+      entry[p.name] = p.subScores[key];
     });
     return entry;
   });

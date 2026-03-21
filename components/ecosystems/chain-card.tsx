@@ -3,6 +3,7 @@ import { EcosystemData } from '@/lib/types';
 import { getScoreColor } from '@/lib/constants';
 import { formatCurrency } from '@/lib/utils';
 import { ScoreRing } from '@/components/dashboard/score-ring';
+import { ChainLogo } from '@/components/dashboard/chain-logo';
 
 interface ChainCardProps {
   ecosystem: EcosystemData;
@@ -16,12 +17,7 @@ export function ChainCard({ ecosystem }: ChainCardProps) {
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div
-            className="flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold text-white"
-            style={{ backgroundColor: ecosystem.color }}
-          >
-            {ecosystem.name.charAt(0)}
-          </div>
+          <ChainLogo chain={ecosystem.chain} size={40} />
           <div>
             <h3 className="font-semibold">{ecosystem.name}</h3>
             <p className="text-xs text-muted-foreground">{ecosystem.projectCount} projects scored</p>
