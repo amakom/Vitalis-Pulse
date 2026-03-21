@@ -21,15 +21,15 @@ export function mapToDisplayProject(
   const isL1L2 = p.category === 'l1-l2';
   const hasStrongScore = vitalisScore >= 50;
 
-  if (runwayMonths === 0 && treasuryUsd > 100_000_000) {
+  if (runwayMonths === 0 && isL1L2) {
+    // L1/L2 chains (Arbitrum, Optimism) have foundation treasuries not captured by TVL
+    runwayMonths = 60;
+  } else if (runwayMonths === 0 && treasuryUsd > 100_000_000) {
     runwayMonths = 60; // 5+ years for $100M+ treasuries
   } else if (runwayMonths === 0 && treasuryUsd > 10_000_000) {
     runwayMonths = 36; // 3 years for $10M+
   } else if (runwayMonths === 0 && treasuryUsd > 1_000_000) {
     runwayMonths = 18; // 18 months for $1M+
-  } else if (runwayMonths === 0 && isL1L2) {
-    // L1/L2 chains (Arbitrum, Optimism) have foundation treasuries not captured by TVL
-    runwayMonths = 60;
   } else if (runwayMonths === 0 && hasStrongScore && (s?.revenue_is_positive)) {
     // Revenue-positive projects with decent scores likely have runway
     runwayMonths = 24;

@@ -35,7 +35,7 @@ export function Footer() {
         </div>
 
         <div className="mt-8 border-t border-border pt-6 text-center text-xs text-muted-foreground">
-          &copy; 2026 VitalisPulse. All rights reserved.
+          &copy; {new Date().getFullYear()} VitalisPulse. All rights reserved.
         </div>
       </div>
     </footer>

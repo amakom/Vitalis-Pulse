@@ -239,5 +239,6 @@ export async function collectCoinGeckoData(coinId: string): Promise<CoinGeckoDat
     price_change_30d: md.price_change_percentage_30d || 0,
     ath: md.ath?.usd || 0,
     ath_change_pct: md.ath_change_percentage?.usd || 0,
+    logo_url: data.image?.small || data.image?.thumb || null,
   };
 }

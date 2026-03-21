@@ -26,6 +26,14 @@ export async function scoreProject(projectId: string): Promise<void> {
   const defillama = await collectDefiLlamaData(project.defillama_slug || '');
   const coingecko = await collectCoinGeckoData(project.coingecko_id || '');
 
+  // 2b. Update project logo from CoinGecko if available
+  if (coingecko.logo_url && !project.logo_url) {
+    await supabaseAdmin
+      .from('projects')
+      .update({ logo_url: coingecko.logo_url })
+      .eq('id', projectId);
+  }
+
   // 3. Cache raw data
   for (const [source, data] of Object.entries({ github, defillama, coingecko })) {
     await supabaseAdmin.from('raw_api_data').insert({
