@@ -56,50 +56,55 @@ const DATA_SOURCES = [
 
 const ROADMAP = [
   {
-    phase: 'Phase 1 — Foundation',
+    phase: 'Foundation',
     period: 'Q1 2026',
     status: 'current' as const,
+    description: 'Launch the core scoring platform with automated data pipelines and public API access.',
     items: [
-      'Launch Vitalis Pulse MVP with 20+ projects scored',
-      'Automated daily scoring via Vercel cron + Supabase',
-      'Public API endpoints for score data',
-      'Embeddable score badges for project READMEs',
-      'Apply for Arbitrum ecosystem grant',
+      { text: 'Launch MVP dashboard with 20+ projects scored', done: true },
+      { text: 'Automated daily scoring pipeline (Supabase + Vercel Cron)', done: true },
+      { text: 'Public REST API endpoints for score data', done: true },
+      { text: 'Embeddable SVG score badges for project READMEs', done: true },
+      { text: 'Scoring methodology documentation', done: true },
+      { text: 'Arbitrum ecosystem grant application', done: false },
     ],
   },
   {
-    phase: 'Phase 2 — Arbitrum Deep Dive',
+    phase: 'Arbitrum Ecosystem Coverage',
     period: 'Q2 2026',
     status: 'next' as const,
+    description: 'Deep coverage of every active Arbitrum project with enhanced on-chain data integration.',
     items: [
-      'Score ALL Arbitrum DeFi, infrastructure, and governance projects',
-      'Arbitrum ecosystem health report (weekly)',
-      'Enhanced on-chain data: real treasury wallet monitoring',
-      'Full API documentation and developer access',
-      'Partner with Arbitrum Foundation for ecosystem visibility',
+      { text: 'Expand to 50+ Arbitrum DeFi, infrastructure, and governance projects', done: false },
+      { text: 'On-chain treasury wallet monitoring for verified addresses', done: false },
+      { text: 'Weekly Arbitrum ecosystem health reports', done: false },
+      { text: 'Full API documentation with developer guides', done: false },
+      { text: 'Arbitrum Foundation partnership for ecosystem visibility', done: false },
     ],
   },
   {
-    phase: 'Phase 3 — Multi-Chain Expansion',
+    phase: 'Multi-Chain Expansion',
     period: 'Q3–Q4 2026',
     status: 'future' as const,
+    description: 'Scale scoring infrastructure to Optimism, Base, and Ethereum mainnet with advanced analytics.',
     items: [
-      'Expand to Optimism, Base, and Ethereum mainnet projects',
-      'Launch Compare tool with ecosystem benchmarks',
-      'Alerts & Watchlist with email notifications',
-      'Advanced analytics and historical data access',
-      'Publish first "State of Web3 Health" report',
+      { text: 'Expand coverage to Optimism, Base, and Ethereum L1 projects', done: false },
+      { text: 'Email alerts and watchlist notifications for score changes', done: false },
+      { text: 'Ecosystem benchmark reports with cross-chain comparisons', done: false },
+      { text: 'Historical score analytics and trend analysis', done: false },
+      { text: 'First annual "State of Web3 Health" report', done: false },
     ],
   },
   {
-    phase: 'Phase 4 — Protocol Infrastructure',
+    phase: 'Protocol Infrastructure',
     period: '2027',
     status: 'future' as const,
+    description: 'Evolve from a dashboard into core Web3 infrastructure — tools that help projects survive.',
     items: [
-      'Vitalis Vault: adaptive treasury management tools',
-      'Vitalis Mesh: service marketplace for Web3 projects',
-      'Enterprise-grade API for institutions and researchers',
-      'Vitalis Score becomes industry standard for due diligence',
+      { text: 'Vitalis Vault — Adaptive treasury management recommendations', done: false },
+      { text: 'Vitalis Mesh — Curated service marketplace for Web3 projects', done: false },
+      { text: 'Enterprise API tier for VCs, funds, and institutional researchers', done: false },
+      { text: 'Establish Vitalis Score as the industry standard for due diligence', done: false },
     ],
   },
 ];
@@ -327,34 +332,128 @@ export default function AboutPage() {
 
       {/* Roadmap */}
       <section className="mb-12">
-        <h2 className="mb-6 text-2xl font-bold">Roadmap</h2>
-        <div className="space-y-4">
-          {ROADMAP.map((phase) => (
-            <div
-              key={phase.phase}
-              className={`rounded-xl border bg-card p-5 ${
-                phase.status === 'current' ? 'border-teal/50' : 'border-border'
-              }`}
-            >
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="font-semibold">{phase.phase}</h3>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-muted-foreground">{phase.period}</span>
-                  {phase.status === 'current' && (
-                    <span className="rounded-full bg-teal/15 px-2 py-0.5 text-xs font-medium text-teal">Current</span>
-                  )}
+        <h2 className="mb-2 text-2xl font-bold">Roadmap</h2>
+        <p className="mb-8 text-muted-foreground">Our path from MVP to Web3 infrastructure standard.</p>
+
+        <div className="relative">
+          {/* Timeline connector line */}
+          <div className="absolute left-[19px] top-0 hidden h-full w-0.5 bg-border sm:block" />
+
+          <div className="space-y-8">
+            {ROADMAP.map((phase, phaseIndex) => {
+              const completedCount = phase.items.filter(i => i.done).length;
+              const totalCount = phase.items.length;
+              const progressPct = Math.round((completedCount / totalCount) * 100);
+
+              return (
+                <div key={phase.phase} className="relative flex gap-6">
+                  {/* Timeline node */}
+                  <div className="hidden shrink-0 sm:flex sm:flex-col sm:items-center">
+                    <div
+                      className={`relative z-10 flex h-10 w-10 items-center justify-center rounded-full border-2 text-sm font-bold ${
+                        phase.status === 'current'
+                          ? 'border-teal bg-teal text-white'
+                          : completedCount === totalCount
+                            ? 'border-emerald-500 bg-emerald-500 text-white'
+                            : 'border-border bg-card text-muted-foreground'
+                      }`}
+                    >
+                      {completedCount === totalCount ? (
+                        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                      ) : (
+                        phaseIndex + 1
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Phase content */}
+                  <div
+                    className={`flex-1 rounded-xl border bg-card overflow-hidden ${
+                      phase.status === 'current'
+                        ? 'border-teal/40 shadow-lg shadow-teal/5'
+                        : 'border-border'
+                    }`}
+                  >
+                    {/* Phase header */}
+                    <div className={`px-5 py-4 ${phase.status === 'current' ? 'bg-teal/5' : ''}`}>
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <div className="flex items-center gap-3">
+                          {/* Mobile phase number */}
+                          <div
+                            className={`flex h-8 w-8 items-center justify-center rounded-full border-2 text-xs font-bold sm:hidden ${
+                              phase.status === 'current'
+                                ? 'border-teal bg-teal text-white'
+                                : 'border-border bg-card text-muted-foreground'
+                            }`}
+                          >
+                            {phaseIndex + 1}
+                          </div>
+                          <h3 className="text-lg font-semibold">{phase.phase}</h3>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono text-xs text-muted-foreground">{phase.period}</span>
+                          {phase.status === 'current' && (
+                            <span className="flex items-center gap-1 rounded-full bg-teal/15 px-2.5 py-0.5 text-xs font-semibold text-teal">
+                              <span className="h-1.5 w-1.5 rounded-full bg-teal animate-pulse" />
+                              In Progress
+                            </span>
+                          )}
+                          {phase.status === 'next' && (
+                            <span className="rounded-full bg-blue-500/15 px-2.5 py-0.5 text-xs font-semibold text-blue-400">
+                              Up Next
+                            </span>
+                          )}
+                          {phase.status === 'future' && (
+                            <span className="rounded-full bg-muted px-2.5 py-0.5 text-xs font-semibold text-muted-foreground">
+                              Planned
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <p className="mt-1.5 text-sm text-muted-foreground">{phase.description}</p>
+
+                      {/* Progress bar for current/completed phases */}
+                      {phase.status === 'current' && (
+                        <div className="mt-3 flex items-center gap-3">
+                          <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
+                            <div
+                              className="h-full rounded-full bg-teal transition-all"
+                              style={{ width: `${progressPct}%` }}
+                            />
+                          </div>
+                          <span className="text-xs font-mono text-muted-foreground">{completedCount}/{totalCount}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Milestone items */}
+                    <div className="border-t border-border px-5 py-3">
+                      <ul className="space-y-2">
+                        {phase.items.map((item, i) => (
+                          <li key={i} className="flex items-start gap-2.5 text-sm">
+                            {item.done ? (
+                              <svg className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                              </svg>
+                            ) : phase.status === 'current' ? (
+                              <div className="mt-1 h-3 w-3 shrink-0 rounded-full border-2 border-teal/50" />
+                            ) : (
+                              <div className="mt-1 h-3 w-3 shrink-0 rounded-full border-2 border-border" />
+                            )}
+                            <span className={item.done ? 'text-muted-foreground line-through decoration-muted-foreground/40' : 'text-foreground'}>
+                              {item.text}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <ul className="space-y-1.5">
-                {phase.items.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
-                    <ArrowRight className="mt-0.5 h-3.5 w-3.5 shrink-0 text-teal" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+              );
+            })}
+          </div>
         </div>
       </section>
 
