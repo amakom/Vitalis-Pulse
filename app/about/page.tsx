@@ -66,7 +66,7 @@ const ROADMAP = [
       { text: 'Public REST API endpoints for score data', done: true },
       { text: 'Embeddable SVG score badges for project READMEs', done: true },
       { text: 'Scoring methodology documentation', done: true },
-      { text: 'Arbitrum ecosystem grant application', done: false },
+      { text: 'Project submission and review pipeline', done: false },
     ],
   },
   {
