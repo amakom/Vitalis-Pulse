@@ -58,8 +58,8 @@ export function ScoreHistoryChart({ data, currentScore }: ScoreHistoryChartProps
             formatter={(value: any) => [value, 'Vitalis Score']}
             labelFormatter={(label: any) => `${data.length - Number(label)} days ago`}
           />
-          <ReferenceLine y={70} stroke="#F59E0B" strokeDasharray="5 5" opacity={0.5} />
-          <ReferenceLine y={50} stroke="#EF4444" strokeDasharray="5 5" opacity={0.5} />
+          <ReferenceLine y={60} stroke="#F59E0B" strokeDasharray="5 5" opacity={0.5} />
+          <ReferenceLine y={40} stroke="#EF4444" strokeDasharray="5 5" opacity={0.5} />
           <Area
             type="monotone"
             dataKey="score"
@@ -74,11 +74,11 @@ export function ScoreHistoryChart({ data, currentScore }: ScoreHistoryChartProps
       <div className="mt-2 flex items-center justify-center gap-6 text-xs text-muted-foreground">
         <div className="flex items-center gap-1.5">
           <span className="h-0.5 w-4 bg-amber-500" style={{ borderTop: '2px dashed #F59E0B' }} />
-          Healthy threshold (70)
+          Healthy threshold (60)
         </div>
         <div className="flex items-center gap-1.5">
           <span className="h-0.5 w-4 bg-red-500" style={{ borderTop: '2px dashed #EF4444' }} />
-          At-risk threshold (50)
+          At-risk threshold (40)
         </div>
       </div>
     </div>

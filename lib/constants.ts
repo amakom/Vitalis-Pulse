@@ -1,11 +1,11 @@
 import { Chain, Category, ScoreTier } from './types';
 
 export const SCORE_TIERS: { tier: ScoreTier; label: string; min: number; max: number; color: string; bgColor: string }[] = [
-  { tier: 'thriving', label: 'Thriving', min: 90, max: 100, color: '#10B981', bgColor: 'rgba(16, 185, 129, 0.15)' },
-  { tier: 'healthy', label: 'Healthy', min: 70, max: 89, color: '#14B8A6', bgColor: 'rgba(20, 184, 166, 0.15)' },
-  { tier: 'at-risk', label: 'At Risk', min: 50, max: 69, color: '#F59E0B', bgColor: 'rgba(245, 158, 11, 0.15)' },
-  { tier: 'critical', label: 'Critical', min: 25, max: 49, color: '#F97316', bgColor: 'rgba(249, 115, 22, 0.15)' },
-  { tier: 'terminal', label: 'Terminal', min: 0, max: 24, color: '#EF4444', bgColor: 'rgba(239, 68, 68, 0.15)' },
+  { tier: 'thriving', label: 'Thriving', min: 80, max: 100, color: '#10B981', bgColor: 'rgba(16, 185, 129, 0.15)' },
+  { tier: 'healthy', label: 'Healthy', min: 60, max: 79, color: '#14B8A6', bgColor: 'rgba(20, 184, 166, 0.15)' },
+  { tier: 'at-risk', label: 'At Risk', min: 40, max: 59, color: '#F59E0B', bgColor: 'rgba(245, 158, 11, 0.15)' },
+  { tier: 'critical', label: 'Critical', min: 20, max: 39, color: '#F97316', bgColor: 'rgba(249, 115, 22, 0.15)' },
+  { tier: 'terminal', label: 'Terminal', min: 0, max: 19, color: '#EF4444', bgColor: 'rgba(239, 68, 68, 0.15)' },
 ];
 
 export function getScoreTier(score: number) {

@@ -63,23 +63,25 @@ function cap(value: number, max = 100): number {
 function scoreDevelopment(gh: GitHubData): number {
   let score = 0;
 
-  // Commits 30d
-  if (gh.commits_30d >= 200) score += 35;
-  else if (gh.commits_30d >= 100) score += 28;
-  else if (gh.commits_30d >= 50) score += 20;
-  else if (gh.commits_30d >= 20) score += 12;
-  else if (gh.commits_30d >= 5) score += 5;
+  // Commits 30d (lowered thresholds — even 10 commits/month shows life)
+  if (gh.commits_30d >= 150) score += 35;
+  else if (gh.commits_30d >= 80) score += 30;
+  else if (gh.commits_30d >= 40) score += 24;
+  else if (gh.commits_30d >= 15) score += 18;
+  else if (gh.commits_30d >= 5) score += 10;
+  else if (gh.commits_30d >= 1) score += 5;
 
   // Active devs
-  if (gh.active_devs >= 20) score += 25;
-  else if (gh.active_devs >= 10) score += 20;
-  else if (gh.active_devs >= 5) score += 14;
-  else if (gh.active_devs >= 2) score += 7;
+  if (gh.active_devs >= 15) score += 25;
+  else if (gh.active_devs >= 8) score += 20;
+  else if (gh.active_devs >= 4) score += 15;
+  else if (gh.active_devs >= 2) score += 10;
+  else if (gh.active_devs >= 1) score += 5;
 
   // PR merge time (lower = better)
   if (gh.pr_merge_hours > 0) {
-    if (gh.pr_merge_hours <= 12) score += 15;
-    else if (gh.pr_merge_hours <= 48) score += 12;
+    if (gh.pr_merge_hours <= 24) score += 15;
+    else if (gh.pr_merge_hours <= 72) score += 12;
     else if (gh.pr_merge_hours <= 168) score += 8;
     else if (gh.pr_merge_hours <= 720) score += 4;
   }
@@ -88,9 +90,9 @@ function scoreDevelopment(gh: GitHubData): number {
   if (gh.last_push_days <= 1) score += 25;
   else if (gh.last_push_days <= 3) score += 22;
   else if (gh.last_push_days <= 7) score += 18;
-  else if (gh.last_push_days <= 14) score += 12;
-  else if (gh.last_push_days <= 30) score += 6;
-  else if (gh.last_push_days <= 90) score += 2;
+  else if (gh.last_push_days <= 14) score += 14;
+  else if (gh.last_push_days <= 30) score += 8;
+  else if (gh.last_push_days <= 90) score += 4;
 
   return cap(score);
 }
@@ -100,12 +102,13 @@ function scoreDevelopment(gh: GitHubData): number {
 function scoreRevenue(dl: DefiLlamaData, cg: CoinGeckoData): number {
   let score = 0;
 
-  // Monthly revenue
-  if (dl.monthly_revenue >= 5_000_000) score += 40;
-  else if (dl.monthly_revenue >= 1_000_000) score += 35;
-  else if (dl.monthly_revenue >= 500_000) score += 28;
+  // Monthly revenue (lowered thresholds)
+  if (dl.monthly_revenue >= 5_000_000) score += 35;
+  else if (dl.monthly_revenue >= 1_000_000) score += 30;
+  else if (dl.monthly_revenue >= 500_000) score += 25;
   else if (dl.monthly_revenue >= 100_000) score += 20;
-  else if (dl.monthly_revenue >= 10_000) score += 10;
+  else if (dl.monthly_revenue >= 10_000) score += 12;
+  else if (dl.monthly_revenue > 0) score += 5;
 
   // Revenue trend (compare last 2 months of history)
   if (dl.revenue_history.length >= 2) {
@@ -116,17 +119,18 @@ function scoreRevenue(dl: DefiLlamaData, cg: CoinGeckoData): number {
       if (change > 0.1) score += 20;
       else if (change > 0) score += 14;
       else if (change > -0.1) score += 8;
-      else score += 2;
+      else score += 4;
     } else if (recent > 0) {
       score += 20;
     }
   }
 
-  // TVL
+  // TVL (counts toward revenue sustainability)
   if (dl.tvl >= 1_000_000_000) score += 20;
   else if (dl.tvl >= 100_000_000) score += 16;
-  else if (dl.tvl >= 10_000_000) score += 10;
-  else if (dl.tvl >= 1_000_000) score += 5;
+  else if (dl.tvl >= 10_000_000) score += 12;
+  else if (dl.tvl >= 1_000_000) score += 8;
+  else if (dl.tvl > 0) score += 4;
 
   // Revenue / market cap efficiency
   if (cg.market_cap > 0 && dl.monthly_revenue > 0) {
@@ -139,6 +143,9 @@ function scoreRevenue(dl: DefiLlamaData, cg: CoinGeckoData): number {
     else if (ratio > 0.01) score += 4;
   }
 
+  // Base points for existing in data sources
+  if (dl.tvl > 0 || cg.market_cap > 0) score += 5;
+
   return cap(score);
 }
 
@@ -150,26 +157,28 @@ function scoreCommunity(cg: CoinGeckoData, dl: DefiLlamaData): number {
   // Market cap
   if (cg.market_cap >= 1_000_000_000) score += 30;
   else if (cg.market_cap >= 100_000_000) score += 24;
-  else if (cg.market_cap >= 10_000_000) score += 16;
-  else if (cg.market_cap >= 1_000_000) score += 8;
+  else if (cg.market_cap >= 10_000_000) score += 18;
+  else if (cg.market_cap >= 1_000_000) score += 12;
+  else if (cg.market_cap > 0) score += 5;
 
   // TVL / market cap ratio
   if (cg.market_cap > 0 && dl.tvl > 0) {
     const ratio = dl.tvl / cg.market_cap;
-    if (ratio > 2) score += 30;
-    else if (ratio > 1) score += 24;
-    else if (ratio > 0.5) score += 18;
-    else if (ratio > 0.1) score += 10;
+    if (ratio > 2) score += 25;
+    else if (ratio > 1) score += 20;
+    else if (ratio > 0.5) score += 16;
+    else if (ratio > 0.1) score += 12;
+    else score += 6;
   }
 
-  // 30d price change
+  // 30d price change (more forgiving in bear markets)
   if (cg.price_change_30d > 10) score += 20;
   else if (cg.price_change_30d > 0) score += 16;
   else if (cg.price_change_30d > -10) score += 12;
   else if (cg.price_change_30d > -25) score += 8;
   else if (cg.price_change_30d > -50) score += 4;
 
-  // Base points
+  // Base points for market presence
   if (dl.tvl > 0) score += 10;
   if (cg.market_cap > 0) score += 10;
 
@@ -184,24 +193,30 @@ function scoreTreasury(dl: DefiLlamaData, cg: CoinGeckoData): number {
   // TVL as proxy for treasury size
   if (dl.tvl >= 1_000_000_000) score += 30;
   else if (dl.tvl >= 100_000_000) score += 25;
-  else if (dl.tvl >= 10_000_000) score += 18;
-  else if (dl.tvl >= 1_000_000) score += 10;
+  else if (dl.tvl >= 10_000_000) score += 20;
+  else if (dl.tvl >= 1_000_000) score += 14;
+  else if (dl.tvl > 0) score += 6;
 
   // Revenue coverage
-  if (dl.monthly_revenue >= 1_000_000) score += 30;
-  else if (dl.monthly_revenue >= 500_000) score += 25;
-  else if (dl.monthly_revenue >= 100_000) score += 18;
+  if (dl.monthly_revenue >= 1_000_000) score += 25;
+  else if (dl.monthly_revenue >= 500_000) score += 20;
+  else if (dl.monthly_revenue >= 100_000) score += 16;
   else if (dl.monthly_revenue >= 10_000) score += 10;
+  else if (dl.monthly_revenue > 0) score += 5;
 
-  // ATH drawdown (ath_change_pct is negative: -50 means 50% down from ATH)
+  // ATH drawdown (more forgiving — most tokens are 50%+ from ATH)
   if (cg.ath_change_pct > -30) score += 20;
-  else if (cg.ath_change_pct > -60) score += 14;
-  else if (cg.ath_change_pct > -80) score += 8;
-  else if (cg.ath_change_pct > -95) score += 3;
+  else if (cg.ath_change_pct > -50) score += 16;
+  else if (cg.ath_change_pct > -70) score += 12;
+  else if (cg.ath_change_pct > -85) score += 8;
+  else if (cg.ath_change_pct > -95) score += 4;
 
-  // Base points
+  // Base points for market presence
   if (cg.market_cap > 0) score += 10;
   if (dl.tvl > 0 || dl.monthly_revenue > 0) score += 10;
+
+  // Established project bonus (has both market cap and TVL)
+  if (cg.market_cap > 0 && dl.tvl > 0) score += 5;
 
   return cap(score);
 }
@@ -307,6 +322,9 @@ function getHealthSummary(vitalisScore: number): string {
   if (vitalisScore >= 20) return 'Critical — significant concerns across most dimensions; survival uncertain without changes.';
   return 'Terminal — minimal activity and resources; project appears inactive or abandoned.';
 }
+
+// NOTE: Tiers (constants.ts) aligned with this function:
+// 80-100 Thriving | 60-79 Healthy | 40-59 At Risk | 20-39 Critical | 0-19 Terminal
 
 function getBadges(vitalisScore: number, runwayMonths: number, revenuePositive: boolean): string[] {
   const badges: string[] = [];

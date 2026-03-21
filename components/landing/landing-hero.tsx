@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowDown, BarChart3, Shield, GitBranch, TrendingUp, Zap, Play } from 'lucide-react';
+import { ArrowDown, BarChart3, Shield, GitBranch, TrendingUp, Zap } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 
 interface LandingHeroProps {
@@ -108,44 +108,56 @@ export function LandingHero({ stats, projectCount }: LandingHeroProps) {
           </Link>
         </div>
 
-        {/* Demo Video */}
+        {/* Dashboard Preview */}
         <div className="mt-16">
-          <div className="mx-auto max-w-3xl">
+          <div className="mx-auto max-w-4xl">
             <div className="relative overflow-hidden rounded-2xl border border-border bg-card shadow-2xl shadow-black/20">
-              {/* Video placeholder — replace src with actual video URL when ready */}
-              <div className="relative aspect-video w-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-                {/* Placeholder state — remove this div and uncomment the video/iframe below when video is ready */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-teal/20 backdrop-blur-sm border border-teal/30">
-                    <Play className="h-7 w-7 text-teal ml-1" />
+              <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6 sm:p-8">
+                {/* Mock browser chrome */}
+                <div className="mb-4 flex items-center gap-2">
+                  <div className="flex gap-1.5">
+                    <div className="h-3 w-3 rounded-full bg-red-500/60" />
+                    <div className="h-3 w-3 rounded-full bg-amber-500/60" />
+                    <div className="h-3 w-3 rounded-full bg-emerald-500/60" />
                   </div>
-                  <div className="text-center">
-                    <p className="text-sm font-semibold text-foreground">See VitalisPulse in Action</p>
-                    <p className="mt-1 text-xs text-muted-foreground">60-second explainer — coming soon</p>
+                  <div className="ml-2 flex-1 rounded-md bg-white/5 px-3 py-1 text-xs text-muted-foreground">
+                    vitalispulse.xyz/project/aave
                   </div>
                 </div>
-
-                {/*
-                  WHEN VIDEO IS READY:
-                  1. Remove the placeholder div above
-                  2. Uncomment one of the options below and add your video URL
-
-                  Option A — YouTube/Vimeo embed:
-                  <iframe
-                    src="YOUR_YOUTUBE_EMBED_URL"
-                    className="absolute inset-0 h-full w-full"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
-
-                  Option B — Self-hosted MP4:
-                  <video
-                    src="/demo.mp4"
-                    controls
-                    poster="/demo-poster.jpg"
-                    className="absolute inset-0 h-full w-full object-cover"
-                  />
-                */}
+                {/* Mock dashboard content */}
+                <div className="grid gap-4 sm:grid-cols-3">
+                  <div className="rounded-xl border border-teal/20 bg-teal/5 p-4 text-center">
+                    <p className="font-mono text-3xl font-bold text-teal">82</p>
+                    <p className="mt-1 text-xs text-muted-foreground">Vitalis Score</p>
+                    <div className="mt-2 flex items-center justify-center gap-1 text-xs text-emerald-400">
+                      <TrendingUp className="h-3 w-3" />
+                      <span>+3.2%</span>
+                    </div>
+                  </div>
+                  <div className="rounded-xl border border-white/10 bg-white/5 p-4 text-center">
+                    <p className="font-mono text-3xl font-bold text-foreground">$12.4B</p>
+                    <p className="mt-1 text-xs text-muted-foreground">Treasury</p>
+                    <p className="mt-2 text-xs text-emerald-400">60+ months runway</p>
+                  </div>
+                  <div className="rounded-xl border border-white/10 bg-white/5 p-4 text-center">
+                    <p className="font-mono text-3xl font-bold text-foreground">A</p>
+                    <p className="mt-1 text-xs text-muted-foreground">Dev Grade</p>
+                    <p className="mt-2 text-xs text-muted-foreground">247 commits / 30d</p>
+                  </div>
+                </div>
+                <div className="mt-4 grid gap-4 sm:grid-cols-5">
+                  {['Treasury', 'Development', 'Community', 'Revenue', 'Governance'].map((dim, i) => (
+                    <div key={dim} className="rounded-lg border border-white/10 bg-white/5 p-3">
+                      <div className="flex items-center justify-between">
+                        <p className="text-xs text-muted-foreground">{dim}</p>
+                        <p className="font-mono text-sm font-semibold text-foreground">{[88, 91, 74, 76, 85][i]}</p>
+                      </div>
+                      <div className="mt-2 h-1.5 rounded-full bg-white/10">
+                        <div className="h-full rounded-full bg-teal" style={{ width: `${[88, 91, 74, 76, 85][i]}%` }} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
