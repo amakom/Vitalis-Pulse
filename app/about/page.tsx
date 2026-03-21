@@ -75,7 +75,7 @@ const ROADMAP = [
       'Score ALL Arbitrum DeFi, infrastructure, and governance projects',
       'Arbitrum ecosystem health report (weekly)',
       'Enhanced on-chain data: real treasury wallet monitoring',
-      'Pro tier launch ($49/mo) with full history + API access',
+      'Full API documentation and developer access',
       'Partner with Arbitrum Foundation for ecosystem visibility',
     ],
   },
@@ -87,7 +87,7 @@ const ROADMAP = [
       'Expand to Optimism, Base, and Ethereum mainnet projects',
       'Launch Compare tool with ecosystem benchmarks',
       'Alerts & Watchlist with email notifications',
-      'Team tier ($199/mo) with private score previews',
+      'Advanced analytics and historical data access',
       'Publish first "State of Web3 Health" report',
     ],
   },
@@ -96,9 +96,9 @@ const ROADMAP = [
     period: '2027',
     status: 'future' as const,
     items: [
-      'Vitalis Vault: adaptive treasury management SDK',
-      'Vitalis Mesh: B2B service marketplace for Web3 projects',
-      'Enterprise API tier for VCs and institutional users',
+      'Vitalis Vault: adaptive treasury management tools',
+      'Vitalis Mesh: service marketplace for Web3 projects',
+      'Enterprise-grade API for institutions and researchers',
       'Vitalis Score becomes industry standard for due diligence',
     ],
   },
@@ -131,7 +131,7 @@ const FAQ_ITEMS = [
   },
   {
     question: 'Who built this?',
-    answer: 'VitalisPulse is built by Lawrence Amakom, a solo developer based in Lagos, Nigeria. The project is open-source and community-driven. Follow @vitalispulse on X for updates.',
+    answer: 'VitalisPulse is an independent, open-source project built by a small team of Web3 builders. The project is community-driven and transparent. Follow @vitalispulse on X for updates and join our community.',
   },
 ];
 
@@ -358,25 +358,27 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Built By */}
+      {/* About the Project */}
       <section className="mb-12">
-        <h2 className="mb-4 text-2xl font-bold">Built By</h2>
+        <h2 className="mb-4 text-2xl font-bold">About the Project</h2>
         <div className="rounded-xl border border-border bg-card p-6">
           <div className="flex flex-col sm:flex-row gap-6">
-            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-teal text-2xl font-bold text-white">
-              LA
+            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-teal">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" className="text-white">
+                <path d="M3 12h4l3-9 4 18 3-9h4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
             </div>
             <div>
-              <h3 className="text-lg font-semibold">Lawrence Amakom</h3>
-              <p className="text-sm text-muted-foreground">Solo Founder & Developer</p>
+              <h3 className="text-lg font-semibold">VitalisPulse</h3>
+              <p className="text-sm text-muted-foreground">Open-Source · Community-Driven · Free Forever</p>
               <p className="mt-3 text-sm text-muted-foreground">
-                Web3 builder and infrastructure operator based in Lagos, Nigeria. Built VitalisPulse as a solo developer
-                to bring transparency and accountability to the Web3 ecosystem. Background in node running,
-                blockchain infrastructure, and full-stack development.
+                VitalisPulse is an independent, open-source project built to bring transparency and accountability
+                to the Web3 ecosystem. We believe every community member, investor, and builder deserves free access
+                to objective, data-driven health metrics — not just TVL and token price.
               </p>
               <p className="mt-2 text-sm text-muted-foreground">
-                VitalisPulse is open-source and built with Next.js, TypeScript, Supabase, and Tailwind CSS.
-                All scoring data comes from publicly verifiable sources.
+                Built with Next.js, TypeScript, Supabase, and Tailwind CSS. All scoring data comes from
+                publicly verifiable sources. No self-reported metrics. No pay-to-play listings.
               </p>
               <div className="mt-4 flex gap-3">
                 <a
