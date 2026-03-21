@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     openGraph: {
       title: `${project.name} — Vitalis Score ${project.vitalisScore}`,
       description: project.healthSummary,
-      url: `https://vitalis-pulse.vercel.app/project/${slug}`,
+      url: `https://www.vitalispulse.xyz/project/${slug}`,
       siteName: "VitalisPulse",
       type: "website",
     },

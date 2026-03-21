@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "VitalisPulse — The Heartbeat of Web3",
     description: "Real-time health scores for Web3 projects. Is your favorite project thriving or dying?",
-    url: "https://vitalis-pulse.vercel.app",
+    url: "https://www.vitalispulse.xyz",
     siteName: "VitalisPulse",
     type: "website",
   },

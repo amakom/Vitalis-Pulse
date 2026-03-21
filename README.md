@@ -4,7 +4,7 @@
 
 ## Links
 
-- **Website:** [vitalis-pulse.vercel.app](https://vitalis-pulse.vercel.app)
+- **Website:** [vitalispulse.xyz](https://www.vitalispulse.xyz/)
 - **Twitter/X:** [@vitalispulse](https://x.com/vitalispulse)
 - **GitHub:** [github.com/vitalispulse](https://github.com/vitalispulse)
 
