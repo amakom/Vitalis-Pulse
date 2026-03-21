@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowDown, BarChart3, Shield, GitBranch, TrendingUp, Zap } from 'lucide-react';
+import { ArrowDown, BarChart3, Shield, GitBranch, TrendingUp, Zap, Play } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 
 interface LandingHeroProps {
@@ -106,6 +106,49 @@ export function LandingHero({ stats, projectCount }: LandingHeroProps) {
             <Zap className="h-4 w-4" />
             Get Your Project Scored
           </Link>
+        </div>
+
+        {/* Demo Video */}
+        <div className="mt-16">
+          <div className="mx-auto max-w-3xl">
+            <div className="relative overflow-hidden rounded-2xl border border-border bg-card shadow-2xl shadow-black/20">
+              {/* Video placeholder — replace src with actual video URL when ready */}
+              <div className="relative aspect-video w-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+                {/* Placeholder state — remove this div and uncomment the video/iframe below when video is ready */}
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-teal/20 backdrop-blur-sm border border-teal/30">
+                    <Play className="h-7 w-7 text-teal ml-1" />
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm font-semibold text-foreground">See VitalisPulse in Action</p>
+                    <p className="mt-1 text-xs text-muted-foreground">60-second explainer — coming soon</p>
+                  </div>
+                </div>
+
+                {/*
+                  WHEN VIDEO IS READY:
+                  1. Remove the placeholder div above
+                  2. Uncomment one of the options below and add your video URL
+
+                  Option A — YouTube/Vimeo embed:
+                  <iframe
+                    src="YOUR_YOUTUBE_EMBED_URL"
+                    className="absolute inset-0 h-full w-full"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+
+                  Option B — Self-hosted MP4:
+                  <video
+                    src="/demo.mp4"
+                    controls
+                    poster="/demo-poster.jpg"
+                    className="absolute inset-0 h-full w-full object-cover"
+                  />
+                */}
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Live Stats Counter */}
