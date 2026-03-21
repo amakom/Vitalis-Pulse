@@ -222,6 +222,7 @@ export async function collectCoinGeckoData(coinId: string): Promise<CoinGeckoDat
     price_change_30d: 0,
     ath: 0,
     ath_change_pct: 0,
+    logo_url: null,
   };
 
   if (!coinId) return empty;
