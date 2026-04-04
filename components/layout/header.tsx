@@ -3,11 +3,12 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Search, Sun, Moon, Menu, X, User, LogOut, Star } from 'lucide-react';
+import { Search, Sun, Moon, Menu, X, User, LogOut, Star, Shield, Settings } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import { Project } from '@/lib/types';
 import { useAuth } from '@/lib/auth/context';
+import { useRole } from '@/lib/hooks/use-role';
 import { SearchModal } from './search-modal';
 
 const NAV_LINKS = [
@@ -25,6 +26,7 @@ export function Header() {
   const [searchProjects, setSearchProjects] = useState<Project[]>([]);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const { user, loading: authLoading, signOut } = useAuth();
+  const { isAdmin, isOwner } = useRole();
 
   // Fetch projects for search on mount
   useEffect(() => {
@@ -131,6 +133,25 @@ export function Header() {
                         >
                           <Star className="h-3.5 w-3.5" /> Watchlist
                         </Link>
+                        {isAdmin && (
+                          <Link
+                            href="/admin"
+                            onClick={() => setUserMenuOpen(false)}
+                            className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-foreground transition-colors hover:bg-accent"
+                          >
+                            <Settings className="h-3.5 w-3.5" /> Admin
+                          </Link>
+                        )}
+                        {isOwner && (
+                          <Link
+                            href="/owner"
+                            onClick={() => setUserMenuOpen(false)}
+                            className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-foreground transition-colors hover:bg-accent"
+                          >
+                            <Shield className="h-3.5 w-3.5" /> Owner
+                          </Link>
+                        )}
+                        <div className="my-1 border-t border-border" />
                         <button
                           onClick={() => { signOut(); setUserMenuOpen(false); }}
                           className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-foreground transition-colors hover:bg-accent"

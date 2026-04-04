@@ -1,7 +1,12 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { RefreshCw, Play, CheckCircle, XCircle, Loader2, LogOut } from 'lucide-react';
+import Link from 'next/link';
+import { RefreshCw, Play, CheckCircle, XCircle, Loader2, Shield, ChevronRight, Settings } from 'lucide-react';
+import { useAuth } from '@/lib/auth/context';
+import { useRole } from '@/lib/hooks/use-role';
+import { createSupabaseBrowser } from '@/lib/supabase/browser';
+import { useToast } from '@/components/layout/toast';
 
 interface ProjectRow {
   id: string;
@@ -21,22 +26,18 @@ interface SubmissionRow {
 }
 
 export default function AdminPage() {
-  const [key, setKey] = useState('');
-  const [authed, setAuthed] = useState(false);
+  const { user, loading: authLoading } = useAuth();
+  const { isAdmin, isOwner, loading: roleLoading } = useRole();
+  const { showToast } = useToast();
   const [projects, setProjects] = useState<ProjectRow[]>([]);
   const [submissions, setSubmissions] = useState<SubmissionRow[]>([]);
   const [scoringId, setScoringId] = useState<string | null>(null);
   const [scoringAll, setScoringAll] = useState(false);
   const [message, setMessage] = useState('');
 
-  const headers = useCallback(() => ({
-    'Authorization': `Bearer ${key}`,
-    'Content-Type': 'application/json',
-  }), [key]);
-
   const loadData = useCallback(async () => {
     try {
-      const { supabase } = await import('@/lib/supabase/client');
+      const supabase = createSupabaseBrowser();
 
       const { data: projs } = await supabase
         .from('projects')
@@ -46,7 +47,7 @@ export default function AdminPage() {
 
       setProjects((projs || []).map((p: any) => ({
         ...p,
-        score: Array.isArray(p.score) ? p.score[0] : p.score,
+        score: Array.isArray(p.score) ? (p.score.length > 0 ? p.score[0] : null) : p.score,
       })));
 
       const { data: subs } = await supabase
@@ -61,8 +62,14 @@ export default function AdminPage() {
   }, []);
 
   useEffect(() => {
-    if (authed) loadData();
-  }, [authed, loadData]);
+    if (!authLoading && !roleLoading && isAdmin) loadData();
+  }, [authLoading, roleLoading, isAdmin, loadData]);
+
+  const logAction = async (action: string, details: any) => {
+    if (!user) return;
+    const supabase = createSupabaseBrowser();
+    await supabase.from('admin_logs').insert({ user_id: user.id, action, details });
+  };
 
   const scoreProject = async (projectId: string) => {
     setScoringId(projectId);
@@ -70,10 +77,11 @@ export default function AdminPage() {
     try {
       const res = await fetch(`/api/admin/score/${projectId}`, {
         method: 'POST',
-        headers: headers(),
+        headers: { Authorization: `Bearer ${process.env.NEXT_PUBLIC_CRON_SECRET || ''}` },
       });
       const data = await res.json();
       setMessage(data.success ? `Scored ${projectId}` : `Error: ${data.error}`);
+      await logAction('score_project', { projectId });
       await loadData();
     } catch {
       setMessage('Network error');
@@ -83,11 +91,14 @@ export default function AdminPage() {
 
   const scoreAll = async () => {
     setScoringAll(true);
-    setMessage('Scoring all projects... this takes 3-5 minutes.');
+    setMessage('Scoring projects...');
     try {
-      const res = await fetch('/api/cron/score-all', { headers: headers() });
+      const res = await fetch('/api/cron/score-all', {
+        headers: { Authorization: `Bearer ${process.env.NEXT_PUBLIC_CRON_SECRET || ''}` },
+      });
       const data = await res.json();
-      setMessage(`Done: ${data.scored} scored, ${data.errors} errors`);
+      setMessage(`Done: ${data.scored || 0} scored`);
+      await logAction('score_all', data);
       await loadData();
     } catch {
       setMessage('Network error');
@@ -96,39 +107,29 @@ export default function AdminPage() {
   };
 
   const updateSubmission = async (id: number, status: string) => {
-    try {
-      const { supabaseAdmin } = await import('@/lib/supabase/server');
-      await supabaseAdmin.from('project_submissions').update({ status }).eq('id', id);
-      await loadData();
-      setMessage(`Submission ${status}`);
-    } catch {
-      // Fallback: use client supabase (won't work with RLS for updates, but try)
-      const { supabase } = await import('@/lib/supabase/client');
-      await supabase.from('project_submissions').update({ status }).eq('id', id);
-      await loadData();
-    }
+    const supabase = createSupabaseBrowser();
+    await supabase.from('project_submissions').update({ status }).eq('id', id);
+    await logAction('update_submission', { submission_id: id, status });
+    await loadData();
+    showToast(`Submission ${status}`);
   };
 
-  if (!authed) {
+  // Access denied
+  if (!authLoading && !roleLoading && !isAdmin) {
     return (
-      <div className="mx-auto max-w-md px-4 py-20">
-        <h1 className="mb-6 text-2xl font-bold text-center">Admin Panel</h1>
-        <div className="rounded-xl border border-border bg-card p-6">
-          <label className="mb-2 block text-sm font-medium">Admin Key</label>
-          <input
-            type="password"
-            value={key}
-            onChange={e => setKey(e.target.value)}
-            placeholder="Enter CRON_SECRET"
-            className="mb-4 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:border-teal focus:outline-none"
-          />
-          <button
-            onClick={() => { if (key.length > 10) setAuthed(true); }}
-            className="w-full rounded-lg bg-teal px-4 py-2 text-sm font-medium text-white hover:bg-teal/90"
-          >
-            Login
-          </button>
-        </div>
+      <div className="mx-auto max-w-xl px-4 py-20 text-center">
+        <Shield className="mx-auto h-12 w-12 text-muted-foreground/30" />
+        <h1 className="mt-4 text-xl font-bold">Access Denied</h1>
+        <p className="mt-2 text-sm text-muted-foreground">Admin access required. Sign in with an admin account.</p>
+        <Link href="/login" className="mt-4 inline-block text-sm text-teal hover:underline">Sign In</Link>
+      </div>
+    );
+  }
+
+  if (authLoading || roleLoading) {
+    return (
+      <div className="mx-auto max-w-4xl px-4 py-12">
+        <div className="flex h-40 items-center justify-center text-muted-foreground">Loading...</div>
       </div>
     );
   }
@@ -136,14 +137,22 @@ export default function AdminPage() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 lg:px-6">
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-2xl font-bold sm:text-3xl">Admin Panel</h1>
+        <div>
+          <div className="flex items-center gap-2">
+            <Settings className="h-5 w-5 text-teal" />
+            <h1 className="text-2xl font-bold sm:text-3xl">Admin Panel</h1>
+          </div>
+          <p className="mt-1 text-sm text-muted-foreground">Signed in as {user?.email}</p>
+        </div>
         <div className="flex gap-2">
-          <button
-            onClick={() => { setAuthed(false); setKey(''); setProjects([]); setSubmissions([]); setMessage(''); }}
-            className="flex items-center gap-1.5 rounded-lg border border-red-500/30 px-3 py-1.5 text-sm text-red-400 hover:bg-red-500/10"
-          >
-            <LogOut className="h-4 w-4" /> Logout
-          </button>
+          {isOwner && (
+            <Link
+              href="/owner"
+              className="flex items-center gap-1 rounded-lg border border-border px-3 py-1.5 text-sm hover:bg-accent"
+            >
+              Owner Dashboard <ChevronRight className="h-4 w-4" />
+            </Link>
+          )}
           <button
             onClick={loadData}
             className="flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-sm hover:bg-accent"
@@ -254,14 +263,13 @@ export default function AdminPage() {
         </div>
       </div>
 
-      {/* Submissions table */}
+      {/* Submissions */}
       <div>
         <h2 className="mb-4 text-lg font-semibold">Submissions</h2>
         {submissions.length === 0 ? (
           <p className="text-sm text-muted-foreground">No submissions yet.</p>
         ) : (
           <>
-          {/* Submissions table - desktop */}
           <div className="hidden overflow-x-auto rounded-xl border border-border md:block">
             <table className="w-full text-sm">
               <thead>
@@ -315,7 +323,6 @@ export default function AdminPage() {
               </tbody>
             </table>
           </div>
-          {/* Submissions cards - mobile */}
           <div className="space-y-3 md:hidden">
             {submissions.map(s => (
               <div key={s.id} className="rounded-xl border border-border bg-card p-4">
