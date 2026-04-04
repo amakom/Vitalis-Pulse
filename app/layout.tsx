@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/layout/theme-provider";
 import { ToastProvider } from "@/components/layout/toast";
+import { AuthProvider } from "@/lib/auth/context";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { Analytics } from "@vercel/analytics/react";
@@ -48,14 +49,16 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased`}>
         <ThemeProvider>
-          <ToastProvider>
-            <div className="flex min-h-screen flex-col">
-              <Header />
-              <main className="flex-1">{children}</main>
-              <Footer />
-            </div>
-            <Analytics />
-          </ToastProvider>
+          <AuthProvider>
+            <ToastProvider>
+              <div className="flex min-h-screen flex-col">
+                <Header />
+                <main className="flex-1">{children}</main>
+                <Footer />
+              </div>
+              <Analytics />
+            </ToastProvider>
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

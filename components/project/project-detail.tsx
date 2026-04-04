@@ -15,6 +15,7 @@ import { CommunitySection } from '@/components/project/community-section';
 import { RevenueSection } from '@/components/project/revenue-section';
 import { GovernanceSection } from '@/components/project/governance-section';
 import { useToast } from '@/components/layout/toast';
+import { useWatchlist } from '@/lib/hooks/use-watchlist';
 
 interface ProjectDetailProps {
   project: Project;
@@ -23,9 +24,10 @@ interface ProjectDetailProps {
 
 export function ProjectDetail({ project, isMock }: ProjectDetailProps) {
   const { showToast } = useToast();
+  const { isWatchlisted, toggle: toggleWatchlist } = useWatchlist();
   const subScores = project.subScores;
   const trendPositive = project.scoreTrend24h >= 0;
-  const [watchlisted, setWatchlisted] = useState(false);
+  const watchlisted = isWatchlisted(project.slug);
   const [embedModalOpen, setEmbedModalOpen] = useState(false);
   const [embedCopied, setEmbedCopied] = useState(false);
 
@@ -33,12 +35,6 @@ export function ProjectDetail({ project, isMock }: ProjectDetailProps) {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-
-  // Check watchlist state from localStorage
-  useEffect(() => {
-    const watchlist = JSON.parse(localStorage.getItem('vitalis-watchlist') || '[]');
-    setWatchlisted(watchlist.includes(project.slug));
-  }, [project.slug]);
 
   const handleShare = async () => {
     const url = `https://www.vitalispulse.xyz/project/${project.slug}`;
@@ -55,19 +51,9 @@ export function ProjectDetail({ project, isMock }: ProjectDetailProps) {
     }
   };
 
-  const handleWatchlist = () => {
-    const watchlist: string[] = JSON.parse(localStorage.getItem('vitalis-watchlist') || '[]');
-    if (watchlisted) {
-      const updated = watchlist.filter((s: string) => s !== project.slug);
-      localStorage.setItem('vitalis-watchlist', JSON.stringify(updated));
-      setWatchlisted(false);
-      showToast('Removed from watchlist');
-    } else {
-      watchlist.push(project.slug);
-      localStorage.setItem('vitalis-watchlist', JSON.stringify(watchlist));
-      setWatchlisted(true);
-      showToast('Added to watchlist');
-    }
+  const handleWatchlist = async () => {
+    const added = await toggleWatchlist(project.slug);
+    showToast(added ? 'Added to watchlist' : 'Removed from watchlist');
   };
 
   const embedCode = `<a href="https://www.vitalispulse.xyz/project/${project.slug}"><img src="https://www.vitalispulse.xyz/api/v1/badge/${project.slug}" alt="${project.name} Vitalis Score" /></a>`;

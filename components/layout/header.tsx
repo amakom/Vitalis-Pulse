@@ -3,10 +3,11 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Search, Sun, Moon, Menu, X } from 'lucide-react';
+import { Search, Sun, Moon, Menu, X, User, LogOut, Star } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import { Project } from '@/lib/types';
+import { useAuth } from '@/lib/auth/context';
 import { SearchModal } from './search-modal';
 
 const NAV_LINKS = [
@@ -22,6 +23,8 @@ export function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchProjects, setSearchProjects] = useState<Project[]>([]);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const { user, loading: authLoading, signOut } = useAuth();
 
   // Fetch projects for search on mount
   useEffect(() => {
@@ -105,12 +108,48 @@ export function Header() {
               <span className="sr-only">Toggle theme</span>
             </button>
 
-            <Link
-              href="/submit"
-              className="hidden items-center gap-2 rounded-lg border border-teal px-4 py-2 text-sm font-medium text-teal transition-colors hover:bg-teal/10 sm:flex"
-            >
-              Get Scored
-            </Link>
+            {/* Auth */}
+            {!authLoading && (
+              user ? (
+                <div className="relative">
+                  <button
+                    onClick={() => setUserMenuOpen(!userMenuOpen)}
+                    className="flex h-9 w-9 items-center justify-center rounded-full bg-teal/15 text-teal transition-colors hover:bg-teal/25"
+                  >
+                    <User className="h-4 w-4" />
+                  </button>
+                  {userMenuOpen && (
+                    <>
+                      <div className="fixed inset-0 z-40" onClick={() => setUserMenuOpen(false)} />
+                      <div className="absolute right-0 top-11 z-50 w-48 rounded-lg border border-border bg-card p-1 shadow-lg">
+                        <p className="truncate px-3 py-2 text-xs text-muted-foreground">{user.email}</p>
+                        <div className="my-1 border-t border-border" />
+                        <Link
+                          href="/watchlist"
+                          onClick={() => setUserMenuOpen(false)}
+                          className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-foreground transition-colors hover:bg-accent"
+                        >
+                          <Star className="h-3.5 w-3.5" /> Watchlist
+                        </Link>
+                        <button
+                          onClick={() => { signOut(); setUserMenuOpen(false); }}
+                          className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-foreground transition-colors hover:bg-accent"
+                        >
+                          <LogOut className="h-3.5 w-3.5" /> Sign Out
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </div>
+              ) : (
+                <Link
+                  href="/login"
+                  className="hidden items-center gap-2 rounded-lg bg-teal px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-teal/90 sm:flex"
+                >
+                  Sign Up
+                </Link>
+              )
+            )}
 
             {/* Mobile menu button */}
             <button
@@ -141,13 +180,31 @@ export function Header() {
                   {link.label}
                 </Link>
               ))}
-              <Link
-                href="/submit"
-                onClick={() => setMobileMenuOpen(false)}
-                className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg border border-teal px-4 py-2 text-sm font-medium text-teal"
-              >
-                Get Scored
-              </Link>
+              {user ? (
+                <>
+                  <Link
+                    href="/watchlist"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={cn('rounded-lg px-3 py-2 text-sm font-medium transition-colors', pathname === '/watchlist' ? 'bg-accent text-foreground' : 'text-muted-foreground hover:text-foreground')}
+                  >
+                    Watchlist
+                  </Link>
+                  <button
+                    onClick={() => { signOut(); setMobileMenuOpen(false); }}
+                    className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg border border-border px-4 py-2 text-sm font-medium text-muted-foreground"
+                  >
+                    Sign Out
+                  </button>
+                </>
+              ) : (
+                <Link
+                  href="/login"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg bg-teal px-4 py-2 text-sm font-medium text-white"
+                >
+                  Sign Up
+                </Link>
+              )}
             </nav>
           </div>
         )}
