@@ -19,7 +19,7 @@ export function TreasurySection({ project, subScore }: TreasurySectionProps) {
   const nativeTokenPct = treasury.composition.find(c => c.label === 'Native Token')?.percentage || 0;
   if (nativeTokenPct > 50) riskFlags.push('High native token concentration');
   if (treasury.runwayMonths < 6) riskFlags.push('Low treasury runway');
-  if (treasury.stablecoinRatio < 0.15) riskFlags.push('Low stablecoin reserves');
+  if (treasury.stablecoinRatio > 0 && treasury.stablecoinRatio < 0.15) riskFlags.push('Low stablecoin reserves');
 
   return (
     <div className="space-y-4">
@@ -48,13 +48,16 @@ export function TreasurySection({ project, subScore }: TreasurySectionProps) {
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <MiniMetric label="Runway" value={formatRunway(treasury.runwayMonths)} valueColor={getRunwayColor(treasury.runwayMonths)} />
         <MiniMetric label="Diversification" value={treasury.diversificationGrade} />
-        <MiniMetric label="Stablecoin Ratio" value={`${Math.round(treasury.stablecoinRatio * 100)}%`} />
+        <MiniMetric label="Stablecoin Ratio" value={treasury.stablecoinRatio > 0 ? `${Math.round(treasury.stablecoinRatio * 100)}%` : 'Data unavailable'} valueColor={treasury.stablecoinRatio === 0 ? '#94A3B8' : undefined} />
         <MiniMetric label="Burn Rate" value={`${formatCurrency(treasury.monthlyBurnUsd)}/mo`} />
       </div>
 
       {/* Chart */}
       <div className="rounded-lg border border-border bg-card p-4">
-        <p className="mb-3 text-sm font-medium text-muted-foreground">Treasury Composition</p>
+        <div className="mb-3 flex items-center gap-2">
+          <p className="text-sm font-medium text-muted-foreground">Treasury Composition</p>
+          <span className="rounded-full bg-amber-500/15 px-2 py-0.5 text-[10px] font-medium text-amber-500">Estimated</span>
+        </div>
         <div className="flex flex-col items-center gap-4 sm:flex-row sm:gap-6">
           <div className="h-40 w-40 shrink-0 sm:h-48 sm:w-48">
             <ResponsiveContainer width="100%" height="100%">

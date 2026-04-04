@@ -83,6 +83,11 @@ export function mapToDisplayProject(
       giniCoefficient: s?.community_gini || 0,
       churnRate: s?.community_churn || 0,
       dauHistory: s?.community_dau_history || [],
+      twitterFollowers: s?.community_twitter_followers || 0,
+      telegramMembers: s?.community_telegram_members || 0,
+      redditSubscribers: s?.community_reddit_subscribers || 0,
+      totalFollowers: s?.community_total_followers || 0,
+      dataAvailable: s?.community_data_available ?? false,
     },
     revenue: {
       monthlyRevenueUsd: s?.revenue_monthly_usd || 0,

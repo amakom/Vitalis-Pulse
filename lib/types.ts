@@ -59,6 +59,11 @@ export interface Project {
     giniCoefficient: number;
     churnRate: number;
     dauHistory: number[];
+    twitterFollowers: number;
+    telegramMembers: number;
+    redditSubscribers: number;
+    totalFollowers: number;
+    dataAvailable: boolean;
   };
   revenue: {
     monthlyRevenueUsd: number;

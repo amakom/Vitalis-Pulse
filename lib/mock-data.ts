@@ -344,6 +344,11 @@ function generateProject(template: { name: string; category: Category; chain: Ch
                  score > 40 ? Math.round(randBetween(4, 12) * 10) / 10 :
                  Math.round(randBetween(10, 25) * 10) / 10,
       dauHistory: generateDAUHistory(dauBase, 90),
+      twitterFollowers: 0,
+      telegramMembers: 0,
+      redditSubscribers: 0,
+      totalFollowers: 0,
+      dataAvailable: false,
     },
     revenue: {
       monthlyRevenueUsd: Math.round(monthlyRevenue),

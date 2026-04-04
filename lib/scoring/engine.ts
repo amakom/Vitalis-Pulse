@@ -40,6 +40,11 @@ export interface ScoringOutput {
   community_gini: number;
   community_churn: number;
   community_dau_history: number[];
+  community_twitter_followers: number;
+  community_telegram_members: number;
+  community_reddit_subscribers: number;
+  community_total_followers: number;
+  community_data_available: boolean;
   revenue_monthly_usd: number;
   revenue_non_token_pct: number;
   revenue_burn_multiple: number;
@@ -154,14 +159,21 @@ function scoreRevenue(dl: DefiLlamaData, cg: CoinGeckoData): number {
 function scoreCommunity(cg: CoinGeckoData, dl: DefiLlamaData): number {
   let score = 0;
 
-  // Market cap
-  if (cg.market_cap >= 1_000_000_000) score += 30;
-  else if (cg.market_cap >= 100_000_000) score += 24;
-  else if (cg.market_cap >= 10_000_000) score += 18;
-  else if (cg.market_cap >= 1_000_000) score += 12;
+  // Community size (from CoinGecko social data)
+  const total = cg.total_community;
+  if (total >= 1_000_000) score += 30;
+  else if (total >= 500_000) score += 25;
+  else if (total >= 100_000) score += 20;
+  else if (total >= 50_000) score += 15;
+  else if (total >= 10_000) score += 10;
+  else if (total > 0) score += 5;
+  // Fallback: if no social data, use market cap as proxy
+  else if (cg.market_cap >= 1_000_000_000) score += 20;
+  else if (cg.market_cap >= 100_000_000) score += 15;
+  else if (cg.market_cap >= 10_000_000) score += 10;
   else if (cg.market_cap > 0) score += 5;
 
-  // TVL / market cap ratio
+  // TVL / market cap ratio (community trust signal)
   if (cg.market_cap > 0 && dl.tvl > 0) {
     const ratio = dl.tvl / cg.market_cap;
     if (ratio > 2) score += 25;
@@ -171,7 +183,7 @@ function scoreCommunity(cg: CoinGeckoData, dl: DefiLlamaData): number {
     else score += 6;
   }
 
-  // 30d price change (more forgiving in bear markets)
+  // 30d price change (retention/sentiment signal)
   if (cg.price_change_30d > 10) score += 20;
   else if (cg.price_change_30d > 0) score += 16;
   else if (cg.price_change_30d > -10) score += 12;
@@ -273,33 +285,33 @@ function getRunwayMonths(tvl: number, monthlyBurn: number): number {
   return Math.min(Math.round(tvl / monthlyBurn), 60);
 }
 
-function getTreasuryComposition(dl: DefiLlamaData, cg: CoinGeckoData): { label: string; percentage: number; color: string }[] {
-  // Estimate composition based on available data
+function getTreasuryComposition(dl: DefiLlamaData, cg: CoinGeckoData): { label: string; percentage: number; color: string; estimated: boolean }[] {
+  // No data at all
   if (dl.tvl <= 0 && cg.market_cap <= 0) {
-    return [{ label: 'Unknown', percentage: 100, color: '#6b7280' }];
+    return [{ label: 'Data unavailable', percentage: 100, color: '#6b7280', estimated: false }];
   }
 
   const hasRevenue = dl.monthly_revenue > 0;
   const hasTvl = dl.tvl > 0;
 
+  // All compositions are estimates — marked as such
   if (hasTvl && hasRevenue) {
     return [
-      { label: 'Protocol TVL', percentage: 45, color: '#3b82f6' },
-      { label: 'Stablecoins', percentage: 25, color: '#10b981' },
-      { label: 'Native Token', percentage: 20, color: '#8b5cf6' },
-      { label: 'Other', percentage: 10, color: '#6b7280' },
+      { label: 'Protocol TVL', percentage: 45, color: '#3b82f6', estimated: true },
+      { label: 'Revenue Reserve', percentage: 25, color: '#10b981', estimated: true },
+      { label: 'Native Token', percentage: 20, color: '#8b5cf6', estimated: true },
+      { label: 'Other', percentage: 10, color: '#6b7280', estimated: true },
     ];
   } else if (hasTvl) {
     return [
-      { label: 'Protocol TVL', percentage: 55, color: '#3b82f6' },
-      { label: 'Native Token', percentage: 30, color: '#8b5cf6' },
-      { label: 'Other', percentage: 15, color: '#6b7280' },
+      { label: 'Protocol TVL', percentage: 55, color: '#3b82f6', estimated: true },
+      { label: 'Native Token', percentage: 30, color: '#8b5cf6', estimated: true },
+      { label: 'Other', percentage: 15, color: '#6b7280', estimated: true },
     ];
   } else {
     return [
-      { label: 'Native Token', percentage: 60, color: '#8b5cf6' },
-      { label: 'Stablecoins', percentage: 20, color: '#10b981' },
-      { label: 'Other', percentage: 20, color: '#6b7280' },
+      { label: 'Native Token', percentage: 60, color: '#8b5cf6', estimated: true },
+      { label: 'Other', percentage: 40, color: '#6b7280', estimated: true },
     ];
   }
 }
@@ -369,15 +381,21 @@ export function calculateScore(input: ScoringInput): ScoringOutput {
   const composition = getTreasuryComposition(input.defillama, input.coingecko);
   const revTrend = getRevenueTrend(input.defillama.revenue_history);
   const revenuePositive = input.defillama.monthly_revenue > 0;
-  const stablecoinPct = composition.find(c => c.label === 'Stablecoins')?.percentage || 0;
-  const stablecoinRatio = stablecoinPct / 100; // Store as decimal (0.25 = 25%)
+  // Stablecoin ratio: no real on-chain data available, so mark as 0 (unknown)
+  const isEstimatedComposition = composition.some(c => c.estimated);
+  const stablecoinRatio = isEstimatedComposition ? 0 : 0; // Will show "Data unavailable" in UI
   const burnMultiple = estimatedBurn > 0 && input.defillama.monthly_revenue > 0
     ? Number((estimatedBurn / input.defillama.monthly_revenue).toFixed(2))
     : 0;
 
-  // Community metrics estimated from available data
-  const dauMau = input.defillama.tvl > 0 ? Math.min(Number((input.defillama.tvl / (input.coingecko.market_cap || 1) * 0.3).toFixed(2)), 1) : 0;
-  const holderGrowth = input.coingecko.price_change_30d > 0 ? Math.min(input.coingecko.price_change_30d * 0.1, 15) : 0;
+  // Community metrics from CoinGecko social data
+  const hasSocialData = input.coingecko.total_community > 0;
+  const dauMau = input.defillama.tvl > 0
+    ? Math.min(Number((input.defillama.tvl / (input.coingecko.market_cap || 1) * 0.3).toFixed(2)), 1)
+    : 0;
+  const holderGrowth = input.coingecko.price_change_30d > 0
+    ? Math.min(Number((input.coingecko.price_change_30d * 0.1).toFixed(1)), 15)
+    : Number(Math.max(input.coingecko.price_change_30d * 0.1, -15).toFixed(1));
 
   return {
     vitalisScore,
@@ -400,12 +418,18 @@ export function calculateScore(input: ScoringInput): ScoringOutput {
     dev_last_push_days: input.github.last_push_days,
     dev_weekly_commits: input.github.weekly_commits,
     dev_grade: devGrade,
-    // Community display
+    // Community display (real social data from CoinGecko when available)
     community_dau_mau: Number(dauMau.toFixed(2)),
-    community_holder_growth: Number(holderGrowth.toFixed(1)),
-    community_gini: 0.65, // placeholder — requires on-chain data
-    community_churn: 0,
+    community_holder_growth: holderGrowth,
+    community_gini: hasSocialData ? 0 : 0, // requires on-chain data — not estimated
+    community_churn: 0, // requires on-chain data — not estimated
     community_dau_history: [],
+    // Social metrics (new)
+    community_twitter_followers: input.coingecko.twitter_followers,
+    community_telegram_members: input.coingecko.telegram_members,
+    community_reddit_subscribers: input.coingecko.reddit_subscribers,
+    community_total_followers: input.coingecko.total_community,
+    community_data_available: hasSocialData,
     // Revenue display
     revenue_monthly_usd: input.defillama.monthly_revenue,
     revenue_non_token_pct: input.defillama.monthly_revenue > 0 ? 70 : 0, // estimate

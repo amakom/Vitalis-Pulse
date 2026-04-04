@@ -24,6 +24,11 @@ export interface CoinGeckoData {
   ath: number;
   ath_change_pct: number;
   logo_url: string | null;
+  // Community data
+  twitter_followers: number;
+  telegram_members: number;
+  reddit_subscribers: number;
+  total_community: number; // sum of all community channels
 }
 
 // ── Helpers ──────────────────────────────────
@@ -223,17 +228,27 @@ export async function collectCoinGeckoData(coinId: string): Promise<CoinGeckoDat
     ath: 0,
     ath_change_pct: 0,
     logo_url: null,
+    twitter_followers: 0,
+    telegram_members: 0,
+    reddit_subscribers: 0,
+    total_community: 0,
   };
 
   if (!coinId) return empty;
 
   const data = await safeFetch(
-    `https://api.coingecko.com/api/v3/coins/${coinId}?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false`
+    `https://api.coingecko.com/api/v3/coins/${coinId}?localization=false&tickers=false&market_data=true&community_data=true&developer_data=false`
   );
 
   if (!data || !data.market_data) return empty;
 
   const md = data.market_data;
+  const cd = data.community_data || {};
+
+  const twitterFollowers = cd.twitter_followers || 0;
+  const telegramMembers = cd.telegram_channel_user_count || 0;
+  const redditSubscribers = cd.reddit_subscribers || 0;
+  const totalCommunity = twitterFollowers + telegramMembers + redditSubscribers;
 
   return {
     price: md.current_price?.usd || 0,
@@ -242,5 +257,9 @@ export async function collectCoinGeckoData(coinId: string): Promise<CoinGeckoDat
     ath: md.ath?.usd || 0,
     ath_change_pct: md.ath_change_percentage?.usd || 0,
     logo_url: data.image?.small || data.image?.thumb || null,
+    twitter_followers: twitterFollowers,
+    telegram_members: telegramMembers,
+    reddit_subscribers: redditSubscribers,
+    total_community: totalCommunity,
   };
 }
