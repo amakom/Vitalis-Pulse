@@ -230,7 +230,9 @@ export function ProjectDetail({ project, isMock }: ProjectDetailProps) {
             Scoring Methodology
           </Link>
           <a
-            href={`mailto:dispute@vitalispulse.xyz?subject=Score Dispute: ${project.name}&body=Project: ${project.name} (${project.slug})%0AScore: ${project.vitalisScore}/100%0A%0APlease describe the issue with this score:`}
+            href="https://docs.google.com/forms/d/e/1FAIpQLSdYX-B11rMSRGpwvOzUrN-qUj7mcX0fraItGzIP9enX9jjGkg/viewform"
+            target="_blank"
+            rel="noopener noreferrer"
             className="rounded-lg border border-border px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent"
           >
             Dispute Score
