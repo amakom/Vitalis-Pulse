@@ -219,7 +219,7 @@ export function ProjectDetail({ project, isMock }: ProjectDetailProps) {
           </svg>
           <span className="text-sm text-muted-foreground">Powered by VitalisPulse</span>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setEmbedModalOpen(true)}
             className="rounded-lg border border-border px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent"
@@ -229,6 +229,12 @@ export function ProjectDetail({ project, isMock }: ProjectDetailProps) {
           <Link href="/about" className="rounded-lg border border-border px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent">
             Scoring Methodology
           </Link>
+          <a
+            href={`mailto:dispute@vitalispulse.xyz?subject=Score Dispute: ${project.name}&body=Project: ${project.name} (${project.slug})%0AScore: ${project.vitalisScore}/100%0A%0APlease describe the issue with this score:`}
+            className="rounded-lg border border-border px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent"
+          >
+            Dispute Score
+          </a>
         </div>
       </div>
 

@@ -35,7 +35,8 @@ export function Footer() {
         </div>
 
         <div className="mt-8 border-t border-border pt-6 text-center text-xs text-muted-foreground">
-          &copy; {new Date().getFullYear()} VitalisPulse. All rights reserved.
+          <p>VitalisPulse provides operational health analytics only. Not investment advice. DYOR.</p>
+          <p className="mt-2">&copy; {new Date().getFullYear()} VitalisPulse. All rights reserved.</p>
         </div>
       </div>
     </footer>
