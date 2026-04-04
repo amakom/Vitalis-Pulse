@@ -60,7 +60,7 @@ export async function getLeaderboard(options?: {
   });
 
   const projects = (data || []).map((p: any) => {
-    const score = Array.isArray(p.score) ? p.score[0] : p.score;
+    const score = Array.isArray(p.score) ? (p.score.length > 0 ? p.score[0] : null) : p.score;
     const scoreHistory = historyMap.get(p.id)?.slice(-90) || [];
     return mapToDisplayProject(p, score, scoreHistory);
   });
@@ -88,7 +88,7 @@ export async function getProject(slug: string): Promise<Project | null> {
     .eq('project_id', data.id)
     .order('recorded_at', { ascending: true });
 
-  const score = Array.isArray(data.score) ? data.score[0] : data.score;
+  const score = Array.isArray(data.score) ? (data.score.length > 0 ? data.score[0] : null) : data.score;
   const scoreHistory = history?.map((h: any) => h.vitalis_score) || [];
 
   return mapToDisplayProject(data, score, scoreHistory);
@@ -131,7 +131,7 @@ export async function getEcosystemStats(): Promise<EcosystemData[]> {
 
   data?.forEach((p: any) => {
     const chain = p.chain;
-    const score = Array.isArray(p.score) ? p.score[0] : p.score;
+    const score = Array.isArray(p.score) ? (p.score.length > 0 ? p.score[0] : null) : p.score;
     if (!score) return;
 
     if (!ecosystems[chain]) {
@@ -166,7 +166,7 @@ export async function searchProjects(query: string): Promise<Project[]> {
     .limit(10);
 
   return (data || []).map((p: any) => {
-    const score = Array.isArray(p.score) ? p.score[0] : p.score;
+    const score = Array.isArray(p.score) ? (p.score.length > 0 ? p.score[0] : null) : p.score;
     return mapToDisplayProject(p, score, []);
   });
 }
@@ -180,7 +180,7 @@ export async function getAllProjects(): Promise<Project[]> {
     .order('vitalis_score', { referencedTable: 'current_scores', ascending: false });
 
   return (data || []).map((p: any) => {
-    const score = Array.isArray(p.score) ? p.score[0] : p.score;
+    const score = Array.isArray(p.score) ? (p.score.length > 0 ? p.score[0] : null) : p.score;
     return mapToDisplayProject(p, score, []);
   });
 }

@@ -50,7 +50,7 @@ export function DevelopmentSection({ project, subScore }: DevelopmentSectionProp
         <MiniMetric label="Commits (30d)" value={development.commits30d.toLocaleString()} />
         <MiniMetric label="Active Devs" value={development.activeDevs.toString()} />
         <MiniMetric label="PR Merge Time" value={`${development.prMergeTimeHours} hrs`} />
-        <MiniMetric label="Last Deploy" value={`${development.lastDeployDaysAgo} days ago`} />
+        <MiniMetric label="Last Deploy" value={development.lastDeployDaysAgo > 0 ? `${development.lastDeployDaysAgo} days ago` : 'Unknown'} />
       </div>
 
       {/* Chart */}

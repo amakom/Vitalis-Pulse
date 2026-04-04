@@ -23,8 +23,9 @@ export const CHAINS: { id: Chain; name: string; color: string }[] = [
   { id: 'base', name: 'Base', color: '#0052FF' },
   { id: 'polygon', name: 'Polygon', color: '#8247E5' },
   { id: 'bnb', name: 'BNB Chain', color: '#F0B90B' },
-  { id: 'optimism', name: 'Optimism', color: '#FF0420' },
+  { id: 'optimism', name: 'Optimism', color: '#FF6680' },
   { id: 'avalanche', name: 'Avalanche', color: '#E84142' },
+  { id: 'cosmos', name: 'Cosmos', color: '#6F7390' },
 ];
 
 export function getChainInfo(chain: Chain) {

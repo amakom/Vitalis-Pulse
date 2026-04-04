@@ -12,7 +12,8 @@ export function GovernanceSection({ project, subScore }: GovernanceSectionProps)
   const { governance } = project;
 
   const riskFlags: string[] = [];
-  if (governance.lastAuditDaysAgo > 365) riskFlags.push('Audit older than 1 year');
+  if (governance.lastAuditDaysAgo === 0) riskFlags.push('Audit status unknown');
+  else if (governance.lastAuditDaysAgo > 365) riskFlags.push('Audit older than 1 year');
   if (governance.voterParticipation < 5) riskFlags.push('Low voter participation');
   if (!governance.bugBountyActive) riskFlags.push('No active bug bounty');
 
@@ -43,8 +44,8 @@ export function GovernanceSection({ project, subScore }: GovernanceSectionProps)
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <MiniMetric
           label="Last Audit"
-          value={`${governance.lastAuditDaysAgo} days ago`}
-          valueColor={governance.lastAuditDaysAgo > 365 ? '#F97316' : undefined}
+          value={governance.lastAuditDaysAgo > 0 ? `${governance.lastAuditDaysAgo} days ago` : 'Unknown'}
+          valueColor={governance.lastAuditDaysAgo === 0 ? '#94A3B8' : governance.lastAuditDaysAgo > 365 ? '#F97316' : undefined}
         />
         <MiniMetric label="Voter Participation" value={`${governance.voterParticipation}%`} />
         <MiniMetric label="Multisig" value={governance.multisig} />
@@ -60,12 +61,18 @@ export function GovernanceSection({ project, subScore }: GovernanceSectionProps)
         <p className="mb-3 text-sm font-medium text-muted-foreground">Security Indicators</p>
         <div className="space-y-2">
           <div className="flex items-center gap-2 text-sm">
-            {governance.lastAuditDaysAgo < 180 ? (
+            {governance.lastAuditDaysAgo === 0 ? (
+              <AlertTriangle className="h-4 w-4 text-muted-foreground" />
+            ) : governance.lastAuditDaysAgo < 180 ? (
               <CheckCircle className="h-4 w-4 text-emerald" />
             ) : (
               <AlertTriangle className="h-4 w-4 text-amber" />
             )}
-            <span>Security audit {governance.lastAuditDaysAgo < 180 ? 'is recent' : 'needs updating'}</span>
+            <span>
+              {governance.lastAuditDaysAgo === 0
+                ? 'Audit status unknown'
+                : `Security audit ${governance.lastAuditDaysAgo < 180 ? 'is recent' : 'needs updating'}`}
+            </span>
           </div>
           <div className="flex items-center gap-2 text-sm">
             {governance.bugBountyActive ? (

@@ -1,4 +1,4 @@
-export type Chain = 'ethereum' | 'solana' | 'arbitrum' | 'base' | 'polygon' | 'bnb' | 'optimism' | 'avalanche';
+export type Chain = 'ethereum' | 'solana' | 'arbitrum' | 'base' | 'polygon' | 'bnb' | 'optimism' | 'avalanche' | 'cosmos';
 
 export type Category = 'defi' | 'gamefi' | 'infrastructure' | 'nft' | 'l1-l2' | 'dao' | 'socialfi';
 

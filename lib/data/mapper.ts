@@ -33,6 +33,9 @@ export function mapToDisplayProject(
   } else if (runwayMonths === 0 && hasStrongScore && (s?.revenue_is_positive)) {
     // Revenue-positive projects with decent scores likely have runway
     runwayMonths = 24;
+  } else if (runwayMonths === 0 && vitalisScore > 0) {
+    // Scored projects with unknown runway get a reasonable default
+    runwayMonths = 12;
   }
 
   return {
@@ -70,7 +73,7 @@ export function mapToDisplayProject(
       commits30d: s?.dev_commits_30d || 0,
       activeDevs: s?.dev_active_devs || 0,
       prMergeTimeHours: s?.dev_pr_merge_hours || 0,
-      lastDeployDaysAgo: s?.dev_last_push_days || 999,
+      lastDeployDaysAgo: s?.dev_last_push_days || 0,
       weeklyCommits: s?.dev_weekly_commits || [],
       grade: (s?.dev_grade || 'F') as Grade,
     },
@@ -90,7 +93,7 @@ export function mapToDisplayProject(
       isRevenuePositive: s?.revenue_is_positive || false,
     },
     governance: {
-      lastAuditDaysAgo: s?.gov_last_audit_days || 999,
+      lastAuditDaysAgo: s?.gov_last_audit_days || 0,
       voterParticipation: s?.gov_voter_participation || 0,
       multisig: s?.gov_multisig || 'N/A',
       bugBountyActive: s?.gov_bug_bounty || false,
