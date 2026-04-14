@@ -20,13 +20,25 @@ export function useRole() {
       }
 
       const supabase = createSupabaseBrowser();
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('profiles')
         .select('role')
         .eq('id', user.id)
         .single();
 
-      setRole((data?.role as UserRole) || 'user');
+      if (error) {
+        console.error('[useRole] Profile fetch error:', error.message, error.code);
+      }
+      console.log('[useRole] Profile data:', data, 'User email:', user.email);
+
+      // Database role takes priority; fall back to env-based owner check
+      if (data?.role) {
+        setRole(data.role as UserRole);
+      } else if (user.email === process.env.NEXT_PUBLIC_OWNER_EMAIL) {
+        setRole('owner');
+      } else {
+        setRole('user');
+      }
       setLoading(false);
     }
     fetchRole();
