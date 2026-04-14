@@ -14,7 +14,7 @@ CREATE POLICY "Users update own watchlist" ON watchlists
 CREATE TABLE IF NOT EXISTS alert_log (
   id BIGSERIAL PRIMARY KEY,
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-  project_id UUID NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+  project_id TEXT NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
   old_score INT NOT NULL,
   new_score INT NOT NULL,
   delta INT NOT NULL,
