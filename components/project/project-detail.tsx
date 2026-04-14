@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Share2, Star, ArrowUpRight, ArrowDownRight, ExternalLink, Globe, BookOpen, Code2, Copy, Check, X } from 'lucide-react';
+import { ArrowLeft, Share2, Star, ArrowUpRight, ArrowDownRight, ExternalLink, Globe, BookOpen, Code2, Copy, Check, X, Bell, BellOff } from 'lucide-react';
 import { Project } from '@/lib/types';
 import { getCategoryLabel } from '@/lib/constants';
 import { ScoreRing } from '@/components/dashboard/score-ring';
@@ -16,6 +16,7 @@ import { RevenueSection } from '@/components/project/revenue-section';
 import { GovernanceSection } from '@/components/project/governance-section';
 import { useToast } from '@/components/layout/toast';
 import { useWatchlist } from '@/lib/hooks/use-watchlist';
+import { useAlert } from '@/lib/hooks/use-alert';
 
 interface ProjectDetailProps {
   project: Project;
@@ -25,6 +26,7 @@ interface ProjectDetailProps {
 export function ProjectDetail({ project, isMock }: ProjectDetailProps) {
   const { showToast } = useToast();
   const { isWatchlisted, toggle: toggleWatchlist } = useWatchlist();
+  const { enabled: alertEnabled, threshold: alertThreshold, toggle: toggleAlert, isLoggedIn } = useAlert(project.slug);
   const subScores = project.subScores;
   const trendPositive = project.scoreTrend24h >= 0;
   const watchlisted = isWatchlisted(project.slug);
@@ -54,6 +56,15 @@ export function ProjectDetail({ project, isMock }: ProjectDetailProps) {
   const handleWatchlist = async () => {
     const added = await toggleWatchlist(project.slug);
     showToast(added ? 'Added to watchlist' : 'Removed from watchlist');
+  };
+
+  const handleAlert = async () => {
+    if (!isLoggedIn) {
+      showToast('Sign in to set alerts');
+      return;
+    }
+    const nowEnabled = await toggleAlert();
+    showToast(nowEnabled ? `Alert set: ±${alertThreshold} points` : 'Alert turned off');
   };
 
   const embedCode = `<a href="https://www.vitalispulse.xyz/project/${project.slug}"><img src="https://www.vitalispulse.xyz/api/v1/badge/${project.slug}" alt="${project.name} Vitalis Score" /></a>`;
@@ -206,6 +217,22 @@ export function ProjectDetail({ project, isMock }: ProjectDetailProps) {
           <span className="text-sm text-muted-foreground">Powered by VitalisPulse</span>
         </div>
         <div className="flex flex-wrap gap-2">
+          {isLoggedIn ? (
+            <button
+              onClick={handleAlert}
+              className={`flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors ${alertEnabled ? 'border-teal bg-teal/10 text-teal hover:bg-teal/20' : 'border-border hover:bg-accent'}`}
+            >
+              {alertEnabled ? <Bell className="h-3.5 w-3.5" /> : <BellOff className="h-3.5 w-3.5" />}
+              {alertEnabled ? `Alert on ±${alertThreshold}` : 'Set Alert'}
+            </button>
+          ) : (
+            <Link
+              href="/login"
+              className="flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent"
+            >
+              <Bell className="h-3.5 w-3.5" /> Set Alert
+            </Link>
+          )}
           <button
             onClick={() => setEmbedModalOpen(true)}
             className="rounded-lg border border-border px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent"

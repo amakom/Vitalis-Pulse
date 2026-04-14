@@ -5,6 +5,7 @@
 import { supabaseAdmin } from '@/lib/supabase/server';
 import { collectGitHubData, collectDefiLlamaData, collectCoinGeckoData } from './collectors';
 import { calculateScore } from './engine';
+import { processScoreChange, type ScoreSnapshot } from '@/lib/alerts/detector';
 
 export async function scoreProject(projectId: string): Promise<void> {
   console.log(`[Pipeline] Scoring project: ${projectId}`);
@@ -54,6 +55,14 @@ export async function scoreProject(projectId: string): Promise<void> {
       treasury_addresses: project.treasury_addresses || {},
     },
   });
+
+  // 4b. Capture previous score snapshot BEFORE upsert (for alerts)
+  const { data: prevCurrent } = await supabaseAdmin
+    .from('current_scores')
+    .select('vitalis_score, treasury_score, development_score, community_score, revenue_score, governance_score')
+    .eq('project_id', projectId)
+    .single();
+  const oldSnapshot: ScoreSnapshot | null = prevCurrent ? (prevCurrent as ScoreSnapshot) : null;
 
   // 5. Get previous score for trend calculation (from score_history, not current_scores)
   const yesterday = new Date();
@@ -131,6 +140,21 @@ export async function scoreProject(projectId: string): Promise<void> {
   });
 
   console.log(`[Pipeline] ${project.name}: Score ${result.vitalisScore} (${result.dev_grade})`);
+
+  // 8. Fire alert emails (non-blocking best-effort)
+  try {
+    const newSnapshot: ScoreSnapshot = {
+      vitalis_score: result.vitalisScore,
+      treasury_score: result.treasuryScore,
+      development_score: result.developmentScore,
+      community_score: result.communityScore,
+      revenue_score: result.revenueScore,
+      governance_score: result.governanceScore,
+    };
+    await processScoreChange(projectId, oldSnapshot, newSnapshot);
+  } catch (err) {
+    console.error(`[Pipeline] Alert processing failed for ${project.name}:`, err);
+  }
 }
 
 // Score the single oldest-scored project (fits within 60s Hobby limit)

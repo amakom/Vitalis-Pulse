@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "vitalis-dev",
-      "runtimeExecutable": "node",
-      "runtimeArgs": ["node_modules/.bin/next", "dev"],
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
       "port": 3000
     }
   ]
